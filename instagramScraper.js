@@ -1944,7 +1944,7 @@ async function loginToInstagram() {
     ]);
 
     const cookies = await page.cookies();
-    await saveCookies(cookies); // Save cookies to file
+    await saveCookies(cookies); 
     console.log('Logged into Instagram...');
     await browser.close();
 }
