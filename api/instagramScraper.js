@@ -2634,8 +2634,12 @@ const puppeteer = require('puppeteer');
 const app = express();
 const port = 5000;
 
-const INSTAGRAM_USERNAME = 'arunsharma7866@outlook.com';
-const INSTAGRAM_PASSWORD = 'Wmtesting@123';
+// const INSTAGRAM_USERNAME = 'arunsharma7866@outlook.com';
+// const INSTAGRAM_PASSWORD = 'Wmtesting@123';
+
+const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
+const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
+
 
 // Load delay dynamically
 async function loadDelay() {
