@@ -1,9 +1,15 @@
 {
     "version": 2,
+    "builds": [
+      {
+        "src": "api/instagramScraper.js",
+        "use": "@vercel/node"
+      }
+    ],
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "/instagramScraper"
+        "dest": "api/instagramScraper.js"
       }
     ]
   }
