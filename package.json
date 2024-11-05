@@ -19,6 +19,7 @@
     "express": "^4.21.1",
     "https-proxy-agent": "^7.0.5",
     "instagram-web-api": "^2.2.2",
+    "playwright": "^1.48.2",
     "puppeteer": "^23.7.0"
   }
 }
