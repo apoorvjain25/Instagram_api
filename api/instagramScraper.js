@@ -2655,7 +2655,7 @@ async function scrapeInstagramData(username) {
     console.time('Total Scraper Time');
 
     const browser = await puppeteer.launch({
-      headless: true,
+      headless: false,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
       defaultViewport: { width: 1280, height: 800 }
     });
