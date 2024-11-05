@@ -413,7 +413,7 @@ async function scrapeInstagramData(username) {
 
     // Get the path to the Chrome executable
     const browser = await puppeteer.launch({
-      headless: true,
+      headless: false,
       executablePath: puppeteer.executablePath(), // This line sets the executable path for Chrome
       args: [
         '--no-sandbox',
