@@ -2641,6 +2641,10 @@ const port = 5000;
 const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
 const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
 
+// console.log('Environment Variables:', process.env); // Log all env variables
+console.log('Username:', INSTAGRAM_USERNAME);
+console.log('Password:', INSTAGRAM_PASSWORD);
+
 
 // Load delay dynamically
 async function loadDelay() {
@@ -2660,7 +2664,7 @@ async function scrapeInstagramData(username) {
     console.time('Total Scraper Time');
 
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
       defaultViewport: { width: 1280, height: 800 }
     });
