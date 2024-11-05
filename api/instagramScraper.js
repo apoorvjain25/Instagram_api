@@ -2258,6 +2258,261 @@
 //     console.log(`App running on http://localhost:${port}`);
 // });
 
+
+
+// const express = require('express');
+// const cors = require('cors'); // Import cors
+// const puppeteer = require('puppeteer');
+
+// const app = express();
+// const port = 5000;
+
+// // Enable CORS for all routes
+// app.use(cors());
+
+// // Instagram credentials (Consider using environment variables for security)
+// // Instagram credentials
+// const INSTAGRAM_USERNAME = 'arunsharma7866@outlook.com';
+// const INSTAGRAM_PASSWORD = 'Wmtesting@123';
+
+// // Hardcoded cookies instead of reading from a file
+// const hardcodedCookies = [
+//     {
+//         name: "sessionid",
+//         value: "69822885006%3ACxTpbUcvlv5Ffh%3A5%3AAYftVVDQnKW8BcpFqcIVEGSrn3ns344apm9OfvDcRw",
+//         domain: ".instagram.com",
+//         path: "/",
+//         expires: 1762253981.072406,
+//         size: 86,
+//         httpOnly: true,
+//         secure: true,
+//         session: false,
+//         priority: "Medium",
+//         sameParty: false,
+//         sourceScheme: "Secure"
+//     },
+//     {
+//         name: "ds_user_id",
+//         value: "69822885006",
+//         domain: ".instagram.com",
+//         path: "/",
+//         expires: 1738493981.07192,
+//         size: 21,
+//         httpOnly: false,
+//         secure: true,
+//         session: false,
+//         priority: "Medium",
+//         sameParty: false,
+//         sourceScheme: "Secure"
+//     },
+//     {
+//         name: "rur",
+//         value: "\"VLL\\05469822885006\\0541762253981:01f7fa02199d35226ec28b45d3a831e229fd337d70724445e3ab154556e8c73a64c838c7\"",
+//         domain: ".instagram.com",
+//         path: "/",
+//         expires: -1,
+//         size: 110,
+//         httpOnly: true,
+//         secure: true,
+//         session: true,
+//         sameSite: "Lax",
+//         priority: "Medium",
+//         sameParty: false,
+//         sourceScheme: "Secure"
+//     },
+//     {
+//         name: "csrftoken",
+//         value: "850Xve3qr3l3dnNL5ICtXdDf7CJ3xrQZ",
+//         domain: ".instagram.com",
+//         path: "/",
+//         expires: 1762167581.071598,
+//         size: 41,
+//         httpOnly: false,
+//         secure: true,
+//         session: false,
+//         priority: "Medium",
+//         sameParty: false,
+//         sourceScheme: "Secure"
+//     },
+//     {
+//         name: "ig_nrcb",
+//         value: "1",
+//         domain: ".instagram.com",
+//         path: "/",
+//         expires: 1762253976.314774,
+//         size: 8,
+//         httpOnly: false,
+//         secure: true,
+//         session: false,
+//         priority: "Medium",
+//         sameParty: false,
+//         sourceScheme: "Secure"
+//     },
+//     {
+//         name: "mid",
+//         value: "ZyipGAALAAFmwzKdDRHHfuivPNzZ",
+//         domain: ".instagram.com",
+//         path: "/",
+//         expires: 1765277976.314643,
+//         size: 31,
+//         httpOnly: false,
+//         secure: true,
+//         session: false,
+//         priority: "Medium",
+//         sameParty: false,
+//         sourceScheme: "Secure"
+//     },
+//     {
+//         name: "wd",
+//         value: "1280x800",
+//         domain: ".instagram.com",
+//         path: "/",
+//         expires: 1731322775,
+//         size: 10,
+//         httpOnly: false,
+//         secure: true,
+//         session: false,
+//         sameSite: "Lax",
+//         priority: "Medium",
+//         sameParty: false,
+//         sourceScheme: "Secure"
+//     },
+//     {
+//         name: "ig_did",
+//         value: "51CBC1CE-CA25-412A-B6C2-2DD7AD6679D0",
+//         domain: ".instagram.com",
+//         path: "/",
+//         expires: 1762253981.072304,
+//         size: 42,
+//         httpOnly: true,
+//         secure: true,
+//         session: false,
+//         priority: "Medium",
+//         sameParty: false,
+//         sourceScheme: "Secure"
+//     },
+//     {
+//         name: "datr",
+//         value: "FqkoZwswnwwocXxcNX5ju4nL",
+//         domain: ".instagram.com",
+//         path: "/",
+//         expires: 1765277974.486814,
+//         size: 28,
+//         httpOnly: true,
+//         secure: true,
+//         session: false,
+//         sameSite: "None",
+//         priority: "Medium",
+//         sameParty: false,
+//         sourceScheme: "Secure"
+//     }
+// ];
+
+
+// // Load cookies from hardcoded array
+// async function loadCookies() {
+//     return hardcodedCookies;
+// }
+
+// // Login to Instagram (optional, if needed to refresh cookies)
+// async function loginToInstagram() {
+//     const browser = await puppeteer.launch({
+//         headless: true,
+//         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+//         defaultViewport: { width: 1280, height: 800 },
+//     });
+
+//     const page = await browser.newPage();
+//     await page.goto('https://www.instagram.com/accounts/login/', {
+//         waitUntil: 'domcontentloaded',
+//         timeout: 10000,
+//     });
+
+//     await page.waitForSelector('input[name="username"]', { timeout: 5000 });
+//     await page.type('input[name="username"]', INSTAGRAM_USERNAME, { delay: 0 });
+//     await page.type('input[name="password"]', INSTAGRAM_PASSWORD, { delay: 0 });
+
+//     await Promise.all([
+//         page.click('button[type="submit"]'),
+//         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 }),
+//     ]);
+
+//     const cookies = await page.cookies();
+//     await browser.close();
+
+//     console.log('Logged into Instagram...');
+//     return cookies; // Return cookies if needed
+// }
+
+// // Scrape Instagram data
+// async function scrapeInstagramData(username) {
+//     const cookies = await loadCookies();
+//     if (!cookies) {
+//         throw new Error('You must log in first');
+//     }
+
+//     const browser = await puppeteer.launch({
+//         headless: true,
+//         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+//         defaultViewport: { width: 1280, height: 800 },
+//     });
+
+//     const page = await browser.newPage();
+//     await page.setCookie(...cookies); // Set cookies for the session
+
+//     await page.goto(`https://www.instagram.com/${username}/`, {
+//         waitUntil: 'domcontentloaded',
+//         timeout: 10000,
+//     });
+
+//     await page.waitForSelector('header section ul li span', { timeout: 5000 });
+
+//     const data = await page.evaluate(() => {
+//         const stats = document.querySelectorAll('header section ul li');
+//         const posts = stats[0]?.querySelector('span')?.innerText || null;
+//         const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
+//         const following = stats[2]?.querySelector('span')?.innerText || null;
+//         const extractedUsername = document.querySelector('header h2')?.innerText || null;
+//         return { extractedUsername, posts, followers, following };
+//     });
+
+//     await browser.close();
+//     return data;
+// }
+
+// // API Routes
+// app.get('/login', async (req, res) => {
+//     try {
+//         const cookies = await loginToInstagram();
+//         res.json({ message: 'Logged in successfully!', cookies });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Login failed' });
+//     }
+// });
+
+// app.get('/scrape/:username', async (req, res) => {
+//     const { username } = req.params;
+//     try {
+//         const data = await scrapeInstagramData(username);
+//         res.json({
+//             username: data.extractedUsername || username,
+//             posts: data.posts,
+//             followers: data.followers,
+//             following: data.following,
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Unable to fetch profile data' });
+//     }
+// });
+
+// // Start server
+// app.listen(port, () => {
+//     console.log(`App running on http://localhost:${port}`);
+// });
+
+
 const express = require('express');
 const cors = require('cors'); // Import cors
 const puppeteer = require('puppeteer');
@@ -2269,150 +2524,13 @@ const port = 5000;
 app.use(cors());
 
 // Instagram credentials (Consider using environment variables for security)
-// Instagram credentials
 const INSTAGRAM_USERNAME = 'arunsharma7866@outlook.com';
 const INSTAGRAM_PASSWORD = 'Wmtesting@123';
 
-// Hardcoded cookies instead of reading from a file
-const hardcodedCookies = [
-    {
-        name: "sessionid",
-        value: "69822885006%3ACxTpbUcvlv5Ffh%3A5%3AAYftVVDQnKW8BcpFqcIVEGSrn3ns344apm9OfvDcRw",
-        domain: ".instagram.com",
-        path: "/",
-        expires: 1762253981.072406,
-        size: 86,
-        httpOnly: true,
-        secure: true,
-        session: false,
-        priority: "Medium",
-        sameParty: false,
-        sourceScheme: "Secure"
-    },
-    {
-        name: "ds_user_id",
-        value: "69822885006",
-        domain: ".instagram.com",
-        path: "/",
-        expires: 1738493981.07192,
-        size: 21,
-        httpOnly: false,
-        secure: true,
-        session: false,
-        priority: "Medium",
-        sameParty: false,
-        sourceScheme: "Secure"
-    },
-    {
-        name: "rur",
-        value: "\"VLL\\05469822885006\\0541762253981:01f7fa02199d35226ec28b45d3a831e229fd337d70724445e3ab154556e8c73a64c838c7\"",
-        domain: ".instagram.com",
-        path: "/",
-        expires: -1,
-        size: 110,
-        httpOnly: true,
-        secure: true,
-        session: true,
-        sameSite: "Lax",
-        priority: "Medium",
-        sameParty: false,
-        sourceScheme: "Secure"
-    },
-    {
-        name: "csrftoken",
-        value: "850Xve3qr3l3dnNL5ICtXdDf7CJ3xrQZ",
-        domain: ".instagram.com",
-        path: "/",
-        expires: 1762167581.071598,
-        size: 41,
-        httpOnly: false,
-        secure: true,
-        session: false,
-        priority: "Medium",
-        sameParty: false,
-        sourceScheme: "Secure"
-    },
-    {
-        name: "ig_nrcb",
-        value: "1",
-        domain: ".instagram.com",
-        path: "/",
-        expires: 1762253976.314774,
-        size: 8,
-        httpOnly: false,
-        secure: true,
-        session: false,
-        priority: "Medium",
-        sameParty: false,
-        sourceScheme: "Secure"
-    },
-    {
-        name: "mid",
-        value: "ZyipGAALAAFmwzKdDRHHfuivPNzZ",
-        domain: ".instagram.com",
-        path: "/",
-        expires: 1765277976.314643,
-        size: 31,
-        httpOnly: false,
-        secure: true,
-        session: false,
-        priority: "Medium",
-        sameParty: false,
-        sourceScheme: "Secure"
-    },
-    {
-        name: "wd",
-        value: "1280x800",
-        domain: ".instagram.com",
-        path: "/",
-        expires: 1731322775,
-        size: 10,
-        httpOnly: false,
-        secure: true,
-        session: false,
-        sameSite: "Lax",
-        priority: "Medium",
-        sameParty: false,
-        sourceScheme: "Secure"
-    },
-    {
-        name: "ig_did",
-        value: "51CBC1CE-CA25-412A-B6C2-2DD7AD6679D0",
-        domain: ".instagram.com",
-        path: "/",
-        expires: 1762253981.072304,
-        size: 42,
-        httpOnly: true,
-        secure: true,
-        session: false,
-        priority: "Medium",
-        sameParty: false,
-        sourceScheme: "Secure"
-    },
-    {
-        name: "datr",
-        value: "FqkoZwswnwwocXxcNX5ju4nL",
-        domain: ".instagram.com",
-        path: "/",
-        expires: 1765277974.486814,
-        size: 28,
-        httpOnly: true,
-        secure: true,
-        session: false,
-        sameSite: "None",
-        priority: "Medium",
-        sameParty: false,
-        sourceScheme: "Secure"
-    }
-];
+// Initialize an in-memory store for cookies
+let cookiesStore = null;
 
-
-// Load cookies from hardcoded array
-async function loadCookies() {
-    return hardcodedCookies;
-}
-
-// Login to Instagram (optional, if needed to refresh cookies)
+// Login to Instagram and store cookies
 async function loginToInstagram() {
     const browser = await puppeteer.launch({
         headless: true,
@@ -2435,18 +2553,17 @@ async function loginToInstagram() {
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 }),
     ]);
 
-    const cookies = await page.cookies();
+    // Store cookies in the in-memory store
+    cookiesStore = await page.cookies();
     await browser.close();
 
     console.log('Logged into Instagram...');
-    return cookies; // Return cookies if needed
 }
 
-// Scrape Instagram data
+// Scrape Instagram data using stored cookies
 async function scrapeInstagramData(username) {
-    const cookies = await loadCookies();
-    if (!cookies) {
-        throw new Error('You must log in first');
+    if (!cookiesStore) {
+        await loginToInstagram(); // Ensure login if no cookies are available
     }
 
     const browser = await puppeteer.launch({
@@ -2456,7 +2573,7 @@ async function scrapeInstagramData(username) {
     });
 
     const page = await browser.newPage();
-    await page.setCookie(...cookies); // Set cookies for the session
+    await page.setCookie(...cookiesStore); // Set cookies for the session
 
     await page.goto(`https://www.instagram.com/${username}/`, {
         waitUntil: 'domcontentloaded',
@@ -2481,8 +2598,8 @@ async function scrapeInstagramData(username) {
 // API Routes
 app.get('/login', async (req, res) => {
     try {
-        const cookies = await loginToInstagram();
-        res.json({ message: 'Logged in successfully!', cookies });
+        await loginToInstagram();
+        res.json({ message: 'Logged in successfully!' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Login failed' });
