@@ -9,11 +9,11 @@
     "routes": [
       {
         "src": "/api/instagramScraper",
-        "dest": "api/instagramScraper.js"
+        "dest": "/api/instagramScraper.js"
       },
       {
         "src": "/(.*)",
-        "dest": "/api/instagramScraper"
+        "dest": "/api/instagramScraper.js"
       }
     ]
   }
