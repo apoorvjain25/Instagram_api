@@ -8,8 +8,12 @@
     ],
     "routes": [
       {
-        "src": "/(.*)",
+        "src": "/api/instagramScraper",
         "dest": "api/instagramScraper.js"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/api/instagramScraper"
       }
     ]
   }
