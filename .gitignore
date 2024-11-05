@@ -1,0 +1,41 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+
+# Build outputs
+dist/
+build/
+out/
+
+# Temporary files
+*.tmp
+*.temp
+
+# IDE specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Puppeteer local Chrome
+/.local-chromium/
+
+# Optional: if you use coverage tools
+coverage/
+
+# Optional: if you have any test reports
+test-results/
+
+# Optional: if you have any user-specific config files
+*.local
