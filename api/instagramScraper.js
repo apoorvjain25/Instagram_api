@@ -522,6 +522,7 @@ const port = process.env.PORT || 8080;
 const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
 const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
 
+console.log('Starting the Instagram scraper...');
 console.log('Username:', INSTAGRAM_USERNAME);
 console.log('Password:', INSTAGRAM_PASSWORD);
 
@@ -532,6 +533,7 @@ async function loadDelay() {
 async function humanDelay(min = 5, max = 20) {
   const delay = await loadDelay();
   const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
+  console.log(`Waiting for ${randomDelay} milliseconds...`);
   await delay(randomDelay);
 }
 
@@ -539,6 +541,7 @@ async function scrapeInstagramData(username) {
   try {
     console.time('Total Scraper Time');
 
+    console.log('Launching Chromium...');
     const browser = await chromium.launch({
       headless: true,
       args: [
@@ -550,11 +553,14 @@ async function scrapeInstagramData(username) {
       defaultViewport: { width: 1280, height: 800 }
     });
 
+    console.log('Browser launched successfully.');
+
     const context = await browser.newContext({
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     });
 
     const page = await context.newPage();
+    console.log('New page opened.');
 
     // Set up request interception here, on the page level
     await page.route('**/*', (route) => {
@@ -566,16 +572,21 @@ async function scrapeInstagramData(username) {
       }
     });
 
+    console.log('Navigating to Instagram login page...');
     await page.goto('https://www.instagram.com/accounts/login/', {
       waitUntil: 'domcontentloaded',
       timeout: 10000,
     });
 
+    console.log('Waiting for login form...');
     await page.waitForSelector('input[name="username"]', { timeout: 5000 });
+
+    console.log('Typing username and password...');
     await humanDelay();
     await page.type('input[name="username"]', INSTAGRAM_USERNAME, { delay: 0 });
     await page.type('input[name="password"]', INSTAGRAM_PASSWORD, { delay: 0 });
 
+    console.log('Submitting login form...');
     await Promise.all([
       page.click('button[type="submit"]'),
       page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 })
@@ -589,8 +600,10 @@ async function scrapeInstagramData(username) {
     console.log(`Navigating to: ${url}`);
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
 
+    console.log('Waiting for profile data to load...');
     await page.waitForSelector('header section ul li span', { timeout: 5000 });
 
+    console.log('Extracting profile data...');
     const data = await page.evaluate(() => {
       const stats = document.querySelectorAll('header section ul li');
       const posts = stats[0]?.querySelector('span')?.innerText || null;
@@ -599,6 +612,8 @@ async function scrapeInstagramData(username) {
       const extractedUsername = document.querySelector('header h2')?.innerText || null;
       return { extractedUsername, posts, followers, following };
     });
+
+    console.log('Data extraction complete.');
 
     await browser.close();
 
@@ -616,9 +631,11 @@ async function scrapeInstagramData(username) {
 
 app.get('/profile/:username', async (req, res) => {
   const { username } = req.params;
+  console.log(`Request received for username: ${username}`);
   const data = await scrapeInstagramData(username);
 
   if (data) {
+    console.log('Returning profile data...');
     res.json({
       username: data.extractedUsername || username,
       posts: data.posts,
@@ -626,6 +643,7 @@ app.get('/profile/:username', async (req, res) => {
       following: data.following
     });
   } else {
+    console.error('Unable to fetch profile data for username:', username);
     res.status(500).json({ error: 'Unable to fetch profile data' });
   }
 });
