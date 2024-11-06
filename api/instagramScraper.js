@@ -515,12 +515,16 @@
 require('dotenv').config();
 const express = require('express');
 const { chromium } = require('playwright');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
 const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
 const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
+
+// Dynamically set the browser executable path
+const BROWSER_PATH = process.env.BROWSER_PATH || path.join(__dirname, 'node_modules', 'playwright-core', '.local-browsers', 'chromium-<version>', 'chrome-linux', 'chrome');
 
 console.log('Starting the Instagram scraper...');
 console.log('Username:', INSTAGRAM_USERNAME);
@@ -544,6 +548,7 @@ async function scrapeInstagramData(username) {
     console.log('Launching Chromium...');
     const browser = await chromium.launch({
       headless: true,
+      executablePath: BROWSER_PATH, // Use dynamic path here
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -587,7 +592,7 @@ async function scrapeInstagramData(username) {
     await page.type('input[name="password"]', INSTAGRAM_PASSWORD, { delay: 0 });
 
     console.log('Submitting login form...');
-    await Promise.all([
+    await Promise.all([ 
       page.click('button[type="submit"]'),
       page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 })
     ]);
