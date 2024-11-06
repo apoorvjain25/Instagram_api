@@ -376,7 +376,6 @@
 // });
 
 
-
 require('dotenv').config();
 const express = require('express');
 const { chromium } = require('playwright');
@@ -392,11 +391,10 @@ console.log('Password:', INSTAGRAM_PASSWORD);
 
 async function ensureChromiumInstalled() {
   try {
-    // Check if Chromium is installed, otherwise install it
+    // Ensure Chromium is launched, Playwright will automatically handle installation
     await chromium.launch();
   } catch (error) {
-    console.log("Chromium not found. Installing...");
-    await chromium.install();
+    console.log("Error launching Chromium:", error);
   }
 }
 
@@ -414,7 +412,7 @@ async function scrapeInstagramData(username) {
   try {
     console.time('Total Scraper Time');
 
-    // Ensure Chromium is installed before launching
+    // Ensure Chromium is installed and launched
     await ensureChromiumInstalled();
 
     const browser = await chromium.launch({
@@ -511,5 +509,4 @@ app.get('/profile/:username', async (req, res) => {
 app.listen(port, () => {
   console.log(`App running on http://localhost:${port}`);
 });
-
 
