@@ -512,9 +512,10 @@
 //   console.log(`App running on http://localhost:${port}`);
 // });
 
+
 require('dotenv').config();
 const express = require('express');
-const { chromium } = require('playwright');
+const puppeteer = require('puppeteer');  // Replaced Playwright with Puppeteer
 const path = require('path');
 
 const app = express();
@@ -524,7 +525,7 @@ const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
 const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
 
 // Dynamically set the browser executable path
-const BROWSER_PATH = process.env.BROWSER_PATH || path.join(__dirname, 'node_modules', 'playwright-core', '.local-browsers', 'chromium-<version>', 'chrome-linux', 'chrome');
+const BROWSER_PATH = process.env.BROWSER_PATH || path.join(__dirname, 'node_modules', 'puppeteer', '.local-chromium', 'chrome-linux', 'chrome');
 
 console.log('Starting the Instagram scraper...');
 console.log('Username:', INSTAGRAM_USERNAME);
@@ -546,34 +547,30 @@ async function scrapeInstagramData(username) {
     console.time('Total Scraper Time');
 
     console.log('Launching Chromium...');
-    const browser = await chromium.launch({
+    const browser = await puppeteer.launch({
       headless: true,
-      executablePath: BROWSER_PATH, // Use dynamic path here
+      executablePath: BROWSER_PATH,  // Use dynamic path here
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-gpu'
-      ],
-      defaultViewport: { width: 1280, height: 800 }
+      ]
     });
 
     console.log('Browser launched successfully.');
 
-    const context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    });
-
-    const page = await context.newPage();
+    const page = await browser.newPage();
     console.log('New page opened.');
 
     // Set up request interception here, on the page level
-    await page.route('**/*', (route) => {
-      const resourceType = route.request().resourceType();
+    await page.setRequestInterception(true);
+    page.on('request', (request) => {
+      const resourceType = request.resourceType();
       if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
-        route.abort(); // Abort requests for specified resource types
+        request.abort();  // Abort requests for specified resource types
       } else {
-        route.continue(); // Continue with other resource types
+        request.continue();  // Continue with other resource types
       }
     });
 
