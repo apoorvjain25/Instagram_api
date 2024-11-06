@@ -391,7 +391,8 @@ console.log('Password:', INSTAGRAM_PASSWORD);
 
 async function ensureChromiumInstalled() {
   try {
-    // Ensure Chromium is launched, Playwright will automatically handle installation
+    // Ensure Chromium is launched, 
+    //Playwright will automatically handle installation
     await chromium.launch();
   } catch (error) {
     console.log("Error launching Chromium:", error);
