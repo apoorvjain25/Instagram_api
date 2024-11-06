@@ -513,143 +513,55 @@
 // });
 
 
-require('dotenv').config();
-const express = require('express');
-const puppeteer = require('puppeteer');  // Replaced Playwright with Puppeteer
-const path = require('path');
 
-const app = express();
-const port = process.env.PORT || 8080;
+const puppeteer = require('puppeteer');
 
-const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
-const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
+async function scrapeInstagramProfile(username) {
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
 
-// Dynamically set the browser executable path
-const BROWSER_PATH = process.env.BROWSER_PATH || path.join(__dirname, 'node_modules', 'puppeteer', '.local-chromium', 'chrome-linux', 'chrome');
+  // Go to Instagram's login page
+  await page.goto('https://www.instagram.com/accounts/login/', {
+    waitUntil: 'networkidle2',
+  });
 
-console.log('Starting the Instagram scraper...');
-console.log('Username:', INSTAGRAM_USERNAME);
-console.log('Password:', INSTAGRAM_PASSWORD);
+  // Login with credentials (use your own credentials)
+  await page.type('input[name="username"]', 'arunsharma7866@outlook.com', { delay: 100 });
+  await page.type('input[name="password"]', 'Wmtesting@123', { delay: 100 });
+  await page.click('button[type="submit"]');
+  
+  // Wait for navigation and ensure login is successful
+  await page.waitForNavigation({ waitUntil: 'networkidle2' });
 
-async function loadDelay() {
-  return (await import('delay')).default;
+  // Navigate to the user profile page
+  await page.goto(`https://www.instagram.com/${username}/`, {
+    waitUntil: 'networkidle2',
+  });
+
+  // Wait for the profile info elements to load, using the new selectors
+  await page.waitForSelector('header section ul li span', { timeout: 5000 });
+
+  // Extract profile information using the latest selectors
+  const profileData = await page.evaluate(() => {
+    const stats = document.querySelectorAll('header section ul li');
+    
+    // Extract the posts, followers, following, and username
+    const posts = stats[0]?.querySelector('span')?.innerText || 'N/A';
+    const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || 'N/A';
+    const following = stats[2]?.querySelector('span')?.innerText || 'N/A';
+    const extractedUsername = document.querySelector('header h2')?.innerText || 'N/A';
+
+    return { extractedUsername, posts, followers, following };
+  });
+
+  // Log the extracted profile data
+  console.log('Profile Data:', profileData);
+
+  // Close the browser
+  await browser.close();
 }
 
-async function humanDelay(min = 5, max = 20) {
-  const delay = await loadDelay();
-  const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
-  console.log(`Waiting for ${randomDelay} milliseconds...`);
-  await delay(randomDelay);
-}
-
-async function scrapeInstagramData(username) {
-  try {
-    console.time('Total Scraper Time');
-
-    console.log('Launching Chromium...');
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: BROWSER_PATH,  // Use dynamic path here
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu'
-      ]
-    });
-
-    console.log('Browser launched successfully.');
-
-    const page = await browser.newPage();
-    console.log('New page opened.');
-
-    // Set up request interception here, on the page level
-    await page.setRequestInterception(true);
-    page.on('request', (request) => {
-      const resourceType = request.resourceType();
-      if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
-        request.abort();  // Abort requests for specified resource types
-      } else {
-        request.continue();  // Continue with other resource types
-      }
-    });
-
-    console.log('Navigating to Instagram login page...');
-    await page.goto('https://www.instagram.com/accounts/login/', {
-      waitUntil: 'domcontentloaded',
-      timeout: 10000,
-    });
-
-    console.log('Waiting for login form...');
-    await page.waitForSelector('input[name="username"]', { timeout: 5000 });
-
-    console.log('Typing username and password...');
-    await humanDelay();
-    await page.type('input[name="username"]', INSTAGRAM_USERNAME, { delay: 0 });
-    await page.type('input[name="password"]', INSTAGRAM_PASSWORD, { delay: 0 });
-
-    console.log('Submitting login form...');
-    await Promise.all([ 
-      page.click('button[type="submit"]'),
-      page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 })
-    ]);
-
-    console.log('Logged into Instagram...');
-
-    console.time('Scrape Time After Login');
-
-    const url = `https://www.instagram.com/${username}/`;
-    console.log(`Navigating to: ${url}`);
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
-
-    console.log('Waiting for profile data to load...');
-    await page.waitForSelector('header section ul li span', { timeout: 5000 });
-
-    console.log('Extracting profile data...');
-    const data = await page.evaluate(() => {
-      const stats = document.querySelectorAll('header section ul li');
-      const posts = stats[0]?.querySelector('span')?.innerText || null;
-      const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
-      const following = stats[2]?.querySelector('span')?.innerText || null;
-      const extractedUsername = document.querySelector('header h2')?.innerText || null;
-      return { extractedUsername, posts, followers, following };
-    });
-
-    console.log('Data extraction complete.');
-
-    await browser.close();
-
-    console.timeEnd('Scrape Time After Login');
-    console.timeEnd('Total Scraper Time');
-
-    return data;
-  } catch (error) {
-    console.error('Error scraping Instagram data:', error);
-    console.timeEnd('Scrape Time After Login');
-    console.timeEnd('Total Scraper Time');
-    return null;
-  }
-}
-
-app.get('/profile/:username', async (req, res) => {
-  const { username } = req.params;
-  console.log(`Request received for username: ${username}`);
-  const data = await scrapeInstagramData(username);
-
-  if (data) {
-    console.log('Returning profile data...');
-    res.json({
-      username: data.extractedUsername || username,
-      posts: data.posts,
-      followers: data.followers,
-      following: data.following
-    });
-  } else {
-    console.error('Unable to fetch profile data for username:', username);
-    res.status(500).json({ error: 'Unable to fetch profile data' });
-  }
-});
-
-app.listen(port, () => {
-  console.log(`App running on http://localhost:${port}`);
-});
+// Call the function with the desired Instagram username
+scrapeInstagramProfile('iamsrk')
+  .then(() => console.log('Scraping complete!'))
+  .catch(err => console.error('Error scraping profile:', err));
