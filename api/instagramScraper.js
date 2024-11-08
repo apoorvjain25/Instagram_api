@@ -1451,11 +1451,161 @@ async function saveCookies(page) {
 //   }
 // }
 
-async function scrapeInstagramData(username) {
-  try {
-    console.time('Total Scraper Time');
+// async function scrapeInstagramData(username) {
+//   try {
+//     console.time('Total Scraper Time');
 
-    const browser = await chromium.launch({
+//     const browser = await chromium.launch({
+//       headless: true,
+//       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+//       defaultViewport: { width: 1280, height: 800 }
+//     });
+
+//     const context = await browser.newContext({
+//       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+//     });
+
+//     const page = await context.newPage();
+
+//     await page.route('**/*', (route) => {
+//       const resourceType = route.request().resourceType();
+//       if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+//         route.abort();
+//       } else {
+//         route.continue();
+//       }
+//     });
+
+//     await loadCookies(page);  // Load cookies if they exist
+
+//     // If there are no cookies, login to Instagram and save cookies
+//     if (!(await page.context().cookies()).length) {
+//       await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'domcontentloaded', timeout: 10000 });
+
+//       await page.waitForSelector('input[name="username"]', { timeout: 5000 });
+//       await humanDelay();
+//       await page.type('input[name="username"]', INSTAGRAM_USERNAME, { delay: 0 });
+//       await page.type('input[name="password"]', INSTAGRAM_PASSWORD, { delay: 0 });
+
+//       await Promise.all([ 
+//         page.click('button[type="submit"]'),
+//         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 })
+//       ]);
+
+//       console.log('Logged into Instagram...');
+//       await saveCookies(page);  // Save cookies after login
+//     }
+
+//     console.time('Scrape Time After Login');
+
+//     await gotoWithRetry(page, `https://www.instagram.com/${username}/`);
+
+//     // Wait for the profile page to fully load
+//     await page.waitForSelector('header section ul li span', { timeout: 5000 });    
+
+//     // Try to extract the username, followers count, following count, and posts count
+// const userData = await page.evaluate(() => {
+//   // Extract username from the 'og:title' meta tag
+//   const username = document.querySelector('meta[property="og:title"]')
+//     ? document.querySelector('meta[property="og:title"]').getAttribute('content').split('•')[0].trim()
+//     : null;
+
+//   // Get elements directly from the header section
+//   const followersElement = document.querySelector('header section ul li a span');
+//   // Try different selectors for followingElement to ensure it is captured
+//   const followingElement = document.querySelector('header section ul li a[href*="/following"] span') ||
+//                            document.querySelector('header section ul li:nth-child(3) span');
+//   const postsElement = document.querySelector('header section ul li span');
+
+//   let followersCount = null;
+//   let followingCount = null;
+//   let postsCount = null;
+
+//   // Extract followers count
+//   if (followersElement && followersElement.textContent) {
+//     const followersText = followersElement.textContent.trim();
+//     const followersMatch = followersText.match(/(\d+([,\.]\d{1,3})*)/);
+//     followersCount = followersMatch ? followersMatch[0] : null;
+//   }
+
+//   // Extract following count
+//   if (followingElement && followingElement.textContent) {
+//     const followingText = followingElement.textContent.trim();
+//     const followingMatch = followingText.match(/(\d+([,\.]\d{1,3})*)/);
+//     followingCount = followingMatch ? followingMatch[0] : null;
+//   } else {
+//     // Fallback to meta tag if element not found
+//     const ogDescription = document.querySelector('meta[property="og:description"]');
+//     const descriptionContent = ogDescription ? ogDescription.getAttribute('content') : null;
+//     if (descriptionContent) {
+//       const followingMatch = descriptionContent.match(/, ([\d.,]+) Following/);
+//       followingCount = followingMatch ? followingMatch[1] : null;
+//     }
+//   }
+
+//   // Extract posts count
+//   if (postsElement && postsElement.textContent) {
+//     const postsText = postsElement.textContent.trim();
+//     const postsMatch = postsText.match(/(\d+([,\.]\d{1,3})*)/);
+//     postsCount = postsMatch ? postsMatch[0] : null;
+//   }
+
+//   return {
+//     username,
+//     followersCount,
+//     followingCount,
+//     postsCount,
+//   };
+// });
+
+
+//     console.log('User Data:', userData);
+
+//     if (userData.username) {
+//       console.log(`Instagram Username: ${userData.username}`);
+//     } else {
+//       console.log('Instagram username not found.');
+//     }
+
+//     if (userData.followersCount) {
+//       console.log(`Followers Count: ${userData.followersCount}`);
+//     } else {
+//       console.log('Followers count not found.');
+//     }
+
+//     if (userData.followingCount) {
+//       console.log(`Following Count: ${userData.followingCount}`);
+//     } else {
+//       console.log('Following count not found.');
+//     }
+
+//     if (userData.postsCount) {
+//       console.log(`Posts Count: ${userData.postsCount}`);
+//     } else {
+//       console.log('Posts count not found.');
+//     }
+
+//     await browser.close();
+
+//     console.timeEnd('Scrape Time After Login');
+//     console.timeEnd('Total Scraper Time');
+
+//     return userData;
+//   } catch (error) {
+//     console.error('Error scraping Instagram data:', error);
+//     console.timeEnd('Scrape Time After Login');
+//     console.timeEnd('Total Scraper Time');
+//     return null;
+//   }
+// }
+
+
+async function scrapeInstagramData(username) {
+  console.time('Total Scraper Time');
+
+  let browser = null;
+  try {
+    browser = await chromium.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
       defaultViewport: { width: 1280, height: 800 }
@@ -1467,6 +1617,7 @@ async function scrapeInstagramData(username) {
 
     const page = await context.newPage();
 
+    // Block unnecessary requests like images and stylesheets
     await page.route('**/*', (route) => {
       const resourceType = route.request().resourceType();
       if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
@@ -1476,127 +1627,70 @@ async function scrapeInstagramData(username) {
       }
     });
 
-    await loadCookies(page);  // Load cookies if they exist
+    // Load cookies if they exist
+    await loadCookies(page);  
 
-    // If there are no cookies, login to Instagram and save cookies
+    // If no cookies, log in and save cookies
     if (!(await page.context().cookies()).length) {
       await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'domcontentloaded', timeout: 10000 });
-
       await page.waitForSelector('input[name="username"]', { timeout: 5000 });
       await humanDelay();
       await page.type('input[name="username"]', INSTAGRAM_USERNAME, { delay: 0 });
       await page.type('input[name="password"]', INSTAGRAM_PASSWORD, { delay: 0 });
-
-      await Promise.all([ 
+      await Promise.all([
         page.click('button[type="submit"]'),
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 })
       ]);
-
       console.log('Logged into Instagram...');
       await saveCookies(page);  // Save cookies after login
     }
 
     console.time('Scrape Time After Login');
-
     await gotoWithRetry(page, `https://www.instagram.com/${username}/`);
-
-    // Wait for the profile page to fully load
     await page.waitForSelector('header section ul li span', { timeout: 5000 });
 
-    // // Try to extract the username, followers count, following count, and posts count
-    // const userData = await page.evaluate(() => {
-    //   // Extract username from meta tag or header
-    //   const username = document.querySelector('meta[property="og:title"]') ? document.querySelector('meta[property="og:title"]').getAttribute('content').split('•')[0].trim() : null;
+    // Scrape data
+    const userData = await page.evaluate(() => {
+      const username = document.querySelector('meta[property="og:title"]')
+        ? document.querySelector('meta[property="og:title"]').getAttribute('content').split('•')[0].trim()
+        : null;
 
-    //   const followersElement = document.querySelector('header section ul li a span');
-    //   const followingElement = document.querySelector('header section ul li a[title="Following"] span');
-    //   const postsElement = document.querySelector('header section ul li span');
+      const followersElement = document.querySelector('header section ul li a span');
+      const followingElement = document.querySelector('header section ul li a[href*="/following"] span') ||
+                               document.querySelector('header section ul li:nth-child(3) span');
+      const postsElement = document.querySelector('header section ul li span');
 
-    //   let followersCount = null;
-    //   let followingCount = null;
-    //   let postsCount = null;
+      let followersCount = null;
+      let followingCount = null;
+      let postsCount = null;
 
-    //   if (followersElement && followersElement.textContent) {
-    //     const followersText = followersElement.textContent.trim();
-    //     const followersMatch = followersText.match(/(\d+([,\.]\d{1,3})*)/);
-    //     followersCount = followersMatch ? followersMatch[0] : null;
-    //   }
+      if (followersElement && followersElement.textContent) {
+        const followersText = followersElement.textContent.trim();
+        const followersMatch = followersText.match(/(\d+([,\.]\d{1,3})*)/);
+        followersCount = followersMatch ? followersMatch[0] : null;
+      }
 
-    //   if (followingElement && followingElement.textContent) {
-    //     const followingText = followingElement.textContent.trim();
-    //     const followingMatch = followingText.match(/(\d+([,\.]\d{1,3})*)/);
-    //     followingCount = followingMatch ? followingMatch[0] : null;
-    //   }
+      if (followingElement && followingElement.textContent) {
+        const followingText = followingElement.textContent.trim();
+        const followingMatch = followingText.match(/(\d+([,\.]\d{1,3})*)/);
+        followingCount = followingMatch ? followingMatch[0] : null;
+      } else {
+        const ogDescription = document.querySelector('meta[property="og:description"]');
+        const descriptionContent = ogDescription ? ogDescription.getAttribute('content') : null;
+        if (descriptionContent) {
+          const followingMatch = descriptionContent.match(/, ([\d.,]+) Following/);
+          followingCount = followingMatch ? followingMatch[1] : null;
+        }
+      }
 
-    //   if (postsElement && postsElement.textContent) {
-    //     const postsText = postsElement.textContent.trim();
-    //     const postsMatch = postsText.match(/(\d+([,\.]\d{1,3})*)/);
-    //     postsCount = postsMatch ? postsMatch[0] : null;
-    //   }
+      if (postsElement && postsElement.textContent) {
+        const postsText = postsElement.textContent.trim();
+        const postsMatch = postsText.match(/(\d+([,\.]\d{1,3})*)/);
+        postsCount = postsMatch ? postsMatch[0] : null;
+      }
 
-    //   return {
-    //     username,
-    //     followersCount,
-    //     followingCount,
-    //     postsCount,
-    //   };
-    // });
-
-    // Try to extract the username, followers count, following count, and posts count
-const userData = await page.evaluate(() => {
-  // Extract username from the 'og:title' meta tag
-  const username = document.querySelector('meta[property="og:title"]')
-    ? document.querySelector('meta[property="og:title"]').getAttribute('content').split('•')[0].trim()
-    : null;
-
-  // Get elements directly from the header section
-  const followersElement = document.querySelector('header section ul li a span');
-  // Try different selectors for followingElement to ensure it is captured
-  const followingElement = document.querySelector('header section ul li a[href*="/following"] span') ||
-                           document.querySelector('header section ul li:nth-child(3) span');
-  const postsElement = document.querySelector('header section ul li span');
-
-  let followersCount = null;
-  let followingCount = null;
-  let postsCount = null;
-
-  // Extract followers count
-  if (followersElement && followersElement.textContent) {
-    const followersText = followersElement.textContent.trim();
-    const followersMatch = followersText.match(/(\d+([,\.]\d{1,3})*)/);
-    followersCount = followersMatch ? followersMatch[0] : null;
-  }
-
-  // Extract following count
-  if (followingElement && followingElement.textContent) {
-    const followingText = followingElement.textContent.trim();
-    const followingMatch = followingText.match(/(\d+([,\.]\d{1,3})*)/);
-    followingCount = followingMatch ? followingMatch[0] : null;
-  } else {
-    // Fallback to meta tag if element not found
-    const ogDescription = document.querySelector('meta[property="og:description"]');
-    const descriptionContent = ogDescription ? ogDescription.getAttribute('content') : null;
-    if (descriptionContent) {
-      const followingMatch = descriptionContent.match(/, ([\d.,]+) Following/);
-      followingCount = followingMatch ? followingMatch[1] : null;
-    }
-  }
-
-  // Extract posts count
-  if (postsElement && postsElement.textContent) {
-    const postsText = postsElement.textContent.trim();
-    const postsMatch = postsText.match(/(\d+([,\.]\d{1,3})*)/);
-    postsCount = postsMatch ? postsMatch[0] : null;
-  }
-
-  return {
-    username,
-    followersCount,
-    followingCount,
-    postsCount,
-  };
-});
-
+      return { username, followersCount, followingCount, postsCount };
+    });
 
     console.log('User Data:', userData);
 
@@ -1624,20 +1718,20 @@ const userData = await page.evaluate(() => {
       console.log('Posts count not found.');
     }
 
-    await browser.close();
-
-    console.timeEnd('Scrape Time After Login');
-    console.timeEnd('Total Scraper Time');
-
     return userData;
+
   } catch (error) {
     console.error('Error scraping Instagram data:', error);
+    return null;
+  } finally {
+    // Ensure timing ends and browser is closed even if there was an error
+    if (browser) {
+      await browser.close();
+    }
     console.timeEnd('Scrape Time After Login');
     console.timeEnd('Total Scraper Time');
-    return null;
   }
 }
-
 
 
 
