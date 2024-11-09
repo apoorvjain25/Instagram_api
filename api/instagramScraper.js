@@ -1095,62 +1095,63 @@
 
 
 
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const { chromium } = require('playwright');
-const fs = require('fs');
-const delay = require('delay');  // Delay for human-like interaction
+//---------------------------------------------------------------------
+// require('dotenv').config();
+// const express = require('express');
+// const cors = require('cors');
+// const { chromium } = require('playwright');
+// const fs = require('fs');
+// const delay = require('delay');  // Delay for human-like interaction
 
-const app = express();
-const port = process.env.PORT || 8080;
+// const app = express();
+// const port = process.env.PORT || 8080;
 
-const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
-const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
+// const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
+// const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
 
-const COOKIE_FILE_PATH = './cookies.json';  // Path to store cookies
+// const COOKIE_FILE_PATH = './cookies.json';  // Path to store cookies
 
-console.log('Username:', INSTAGRAM_USERNAME);
-console.log('Password:', INSTAGRAM_PASSWORD);
+// console.log('Username:', INSTAGRAM_USERNAME);
+// console.log('Password:', INSTAGRAM_PASSWORD);
 
-// Enable CORS for all routes
-app.use(cors());
+// // Enable CORS for all routes
+// app.use(cors());
 
-// Human-like delay for simulating real user interaction
-async function humanDelay(min = 5, max = 20) {
-  const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
-  await delay(randomDelay * 1000); // delay in milliseconds
-}
+// // Human-like delay for simulating real user interaction
+// async function humanDelay(min = 5, max = 20) {
+//   const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
+//   await delay(randomDelay * 1000); // delay in milliseconds
+// }
 
-// Retry mechanism for navigating to the page
-async function gotoWithRetry(page, url, retries = 3) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      return; // If successful, exit
-    } catch (error) {
-      console.error(`Attempt ${i + 1} failed: ${error.message}`);
-      if (i === retries - 1) throw error; // Throw error after last retry
-      await page.reload(); // Reload and try again
-    }
-  }
-}
+// // Retry mechanism for navigating to the page
+// async function gotoWithRetry(page, url, retries = 3) {
+//   for (let i = 0; i < retries; i++) {
+//     try {
+//       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+//       return; // If successful, exit
+//     } catch (error) {
+//       console.error(`Attempt ${i + 1} failed: ${error.message}`);
+//       if (i === retries - 1) throw error; // Throw error after last retry
+//       await page.reload(); // Reload and try again
+//     }
+//   }
+// }
 
-// Function to load cookies from the JSON file
-async function loadCookies(page) {
-  if (fs.existsSync(COOKIE_FILE_PATH)) {
-    const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE_PATH));
-    await page.context().addCookies(cookies);
-    console.log('Cookies loaded from file');
-  }
-}
+// // Function to load cookies from the JSON file
+// async function loadCookies(page) {
+//   if (fs.existsSync(COOKIE_FILE_PATH)) {
+//     const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE_PATH));
+//     await page.context().addCookies(cookies);
+//     console.log('Cookies loaded from file');
+//   }
+// }
 
-// Function to save cookies to the JSON file
-async function saveCookies(page) {
-  const cookies = await page.context().cookies();
-  fs.writeFileSync(COOKIE_FILE_PATH, JSON.stringify(cookies, null, 2));
-  console.log('Cookies saved to file');
-}
+// // Function to save cookies to the JSON file
+// async function saveCookies(page) {
+//   const cookies = await page.context().cookies();
+//   fs.writeFileSync(COOKIE_FILE_PATH, JSON.stringify(cookies, null, 2));
+//   console.log('Cookies saved to file');
+// }
 
 // async function scrapeInstagramData(username) {
 //   try {
@@ -1600,6 +1601,305 @@ async function saveCookies(page) {
 // }
 
 
+// this code give followres value correct K or M added
+
+// require('dotenv').config();
+// const express = require('express');
+// const cors = require('cors');
+// const { chromium } = require('playwright');
+// const fs = require('fs');
+// const delay = require('delay');  // Delay for human-like interaction
+
+// const app = express();
+// const port = process.env.PORT || 8080;
+
+// const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
+// const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
+
+// const COOKIE_FILE_PATH = './cookies.json';  // Path to store cookies
+
+// console.log('Username:', INSTAGRAM_USERNAME);
+// console.log('Password:', INSTAGRAM_PASSWORD);
+
+// // Enable CORS for all routes
+// app.use(cors());
+
+// // Human-like delay for simulating real user interaction
+// async function humanDelay(min = 5, max = 20) {
+//   const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
+//   await delay(randomDelay * 1000); // delay in milliseconds
+// }
+
+// // Retry mechanism for navigating to the page
+// async function gotoWithRetry(page, url, retries = 3) {
+//   for (let i = 0; i < retries; i++) {
+//     try {
+//       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+//       return; // If successful, exit
+//     } catch (error) {
+//       console.error(`Attempt ${i + 1} failed: ${error.message}`);
+//       if (i === retries - 1) throw error; // Throw error after last retry
+//       await page.reload(); // Reload and try again
+//     }
+//   }
+// }
+
+// // Function to load cookies from the JSON file
+// async function loadCookies(page) {
+//   if (fs.existsSync(COOKIE_FILE_PATH)) {
+//     const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE_PATH));
+//     await page.context().addCookies(cookies);
+//     console.log('Cookies loaded from file');
+//   }
+// }
+
+// // Function to save cookies to the JSON file
+// async function saveCookies(page) {
+//   const cookies = await page.context().cookies();
+//   fs.writeFileSync(COOKIE_FILE_PATH, JSON.stringify(cookies, null, 2));
+//   console.log('Cookies saved to file');
+// }
+
+
+// async function scrapeInstagramData(username) {
+//   console.time('Total Scraper Time');
+
+//   let browser = null;
+//   try {
+//     browser = await chromium.launch({
+//       headless: true,
+//       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+//       defaultViewport: { width: 1280, height: 800 }
+//     });
+
+//     const context = await browser.newContext({
+//       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+//     });
+
+//     const page = await context.newPage();
+
+//     // Block unnecessary requests like images and stylesheets
+//     await page.route('**/*', (route) => {
+//       const resourceType = route.request().resourceType();
+//       if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+//         route.abort();
+//       } else {
+//         route.continue();
+//       }
+//     });
+
+//     // Load cookies if they exist
+//     await loadCookies(page);  
+
+//     // If no cookies, log in and save cookies
+//     if (!(await page.context().cookies()).length) {
+//       await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'domcontentloaded', timeout: 10000 });
+//       await page.waitForSelector('input[name="username"]', { timeout: 5000 });
+//       await humanDelay();
+//       await page.type('input[name="username"]', INSTAGRAM_USERNAME, { delay: 0 });
+//       await page.type('input[name="password"]', INSTAGRAM_PASSWORD, { delay: 0 });
+//       await Promise.all([
+//         page.click('button[type="submit"]'),
+//         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 })
+//       ]);
+//       console.log('Logged into Instagram...');
+//       await saveCookies(page);  // Save cookies after login
+//     }
+
+//     console.time('Scrape Time After Login');
+//     await gotoWithRetry(page, `https://www.instagram.com/${username}/`);
+//     await page.waitForSelector('header section ul li span', { timeout: 5000 });
+
+//     // Scrape data
+//     const userData = await page.evaluate(() => {
+//       const username = document.querySelector('meta[property="og:title"]')
+//         ? document.querySelector('meta[property="og:title"]').getAttribute('content').split('•')[0].trim()
+//         : null;
+
+//       const followersElement = document.querySelector('header section ul li a span');
+//       const followingElement = document.querySelector('header section ul li a[href*="/following"] span') ||
+//                                document.querySelector('header section ul li:nth-child(3) span');
+//       const postsElement = document.querySelector('header section ul li span');
+
+//       let followersCount = null;
+//       let followingCount = null;
+//       let postsCount = null;
+
+//       // if (followersElement && followersElement.textContent) {
+//       //   const followersText = followersElement.textContent.trim();
+//       //   const followersMatch = followersText.match(/(\d+([,\.]\d{1,3})*)/);
+//       //   followersCount = followersMatch ? followersMatch[0] : null;
+//       // }
+//       if (followersElement && followersElement.textContent) {
+//         const followersText = followersElement.textContent.trim();
+//         const followersMatch = followersText.match(/(\d+(\.\d+)?)([KMBkmb]?)\s*/);
+//         followersCount = followersMatch ? followersMatch[0] : null;
+//       }
+      
+
+//       if (followingElement && followingElement.textContent) {
+//         const followingText = followingElement.textContent.trim();
+//         const followingMatch = followingText.match(/(\d+([,\.]\d{1,3})*)/);
+//         followingCount = followingMatch ? followingMatch[0] : null;
+//       } else {
+//         const ogDescription = document.querySelector('meta[property="og:description"]');
+//         const descriptionContent = ogDescription ? ogDescription.getAttribute('content') : null;
+//         if (descriptionContent) {
+//           const followingMatch = descriptionContent.match(/, ([\d.,]+) Following/);
+//           followingCount = followingMatch ? followingMatch[1] : null;
+//         }
+//       }
+
+//       if (postsElement && postsElement.textContent) {
+//         const postsText = postsElement.textContent.trim();
+//         const postsMatch = postsText.match(/(\d+([,\.]\d{1,3})*)/);
+//         postsCount = postsMatch ? postsMatch[0] : null;
+//       }
+
+//       return { username, followersCount, followingCount, postsCount };
+//     });
+
+//     console.log('User Data:', userData);
+
+//     if (userData.username) {
+//       console.log(`Instagram Username: ${userData.username}`);
+//     } else {
+//       console.log('Instagram username not found.');
+//     }
+
+//     if (userData.followersCount) {
+//       console.log(`Followers Count: ${userData.followersCount}`);
+//     } else {
+//       console.log('Followers count not found.');
+//     }
+
+//     if (userData.followingCount) {
+//       console.log(`Following Count: ${userData.followingCount}`);
+//     } else {
+//       console.log('Following count not found.');
+//     }
+
+//     if (userData.postsCount) {
+//       console.log(`Posts Count: ${userData.postsCount}`);
+//     } else {
+//       console.log('Posts count not found.');
+//     }
+
+//     return userData;
+
+//   } catch (error) {
+//     console.error('Error scraping Instagram data:', error);
+//     return null;
+//   } finally {
+//     // Ensure timing ends and browser is closed even if there was an error
+//     if (browser) {
+//       await browser.close();
+//     }
+//     console.timeEnd('Scrape Time After Login');
+//     console.timeEnd('Total Scraper Time');
+//   }
+// }
+
+
+// // Default route for root URL
+// app.get('/', (req, res) => {
+//   res.send('API is running successfully, hurrah!');
+// });
+
+// app.get('/profile/:username', async (req, res) => {
+//   const { username } = req.params;
+//   const data = await scrapeInstagramData(username);
+
+//   if (data) {
+//     res.json({
+//       username: data.username,
+//       followers: data.followersCount,
+//       following: data.followingCount,
+//       posts: data.postsCount
+//     });
+//   } else {
+//     res.status(500).json({ error: 'Unable to fetch profile data' });
+//   }
+// });
+
+
+// // New endpoint to fetch cookies
+// app.get('/get-cookies', async (req, res) => {
+//   if (fs.existsSync(COOKIE_FILE_PATH)) {
+//     const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE_PATH));
+//     res.json({ cookies });
+//   } else {
+//     res.status(404).json({ error: 'Cookies not found. Please log in first.' });
+//   }
+// });
+
+// app.listen(port, () => {
+//   console.log(`App running on http://localhost:${port}`);
+// });
+
+
+
+//perfectly run 
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const { chromium } = require('playwright');
+const fs = require('fs');
+const delay = require('delay');  // Delay for human-like interaction
+
+const app = express();
+const port = process.env.PORT || 8080;
+
+const INSTAGRAM_USERNAME = process.env.INSTAGRAM_USERNAME;
+const INSTAGRAM_PASSWORD = process.env.INSTAGRAM_PASSWORD;
+
+const COOKIE_FILE_PATH = './cookies.json';  // Path to store cookies
+
+// console.log('Username:', INSTAGRAM_USERNAME);
+// console.log('Password:', INSTAGRAM_PASSWORD);
+
+// Enable CORS for all routes
+app.use(cors());
+
+// Human-like delay for simulating real user interaction
+async function humanDelay(min = 5, max = 20) {
+  const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
+  await delay(randomDelay * 1000); // delay in milliseconds
+}
+
+// Retry mechanism for navigating to the page
+async function gotoWithRetry(page, url, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      return; // If successful, exit
+    } catch (error) {
+      console.error(`Attempt ${i + 1} failed: ${error.message}`);
+      if (i === retries - 1) throw error; // Throw error after last retry
+      await page.reload(); // Reload and try again
+    }
+  }
+}
+
+// Function to load cookies from the JSON file
+async function loadCookies(page) {
+  if (fs.existsSync(COOKIE_FILE_PATH)) {
+    const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE_PATH));
+    await page.context().addCookies(cookies);
+    // console.log('Cookies loaded from file');
+  }
+}
+
+async function loadCookies(page) {
+  console.time('Cookie Load Time');
+  if (fs.existsSync(COOKIE_FILE_PATH)) {
+    const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE_PATH));
+    await page.context().addCookies(cookies);
+    // console.log('Cookies loaded from file');
+  }
+  // console.timeEnd('Cookie Load Time');
+}
+
 async function scrapeInstagramData(username) {
   console.time('Total Scraper Time');
 
@@ -1632,6 +1932,7 @@ async function scrapeInstagramData(username) {
 
     // If no cookies, log in and save cookies
     if (!(await page.context().cookies()).length) {
+      console.time('Login Time');
       await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'domcontentloaded', timeout: 10000 });
       await page.waitForSelector('input[name="username"]', { timeout: 5000 });
       await humanDelay();
@@ -1641,15 +1942,16 @@ async function scrapeInstagramData(username) {
         page.click('button[type="submit"]'),
         page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10000 })
       ]);
-      console.log('Logged into Instagram...');
+      // console.log('Logged into Instagram...');
       await saveCookies(page);  // Save cookies after login
+      // console.timeEnd('Login Time');
     }
 
-    console.time('Scrape Time After Login');
+    // Scraping data
+    // console.time('Username Scrape Time');
     await gotoWithRetry(page, `https://www.instagram.com/${username}/`);
     await page.waitForSelector('header section ul li span', { timeout: 5000 });
 
-    // Scrape data
     const userData = await page.evaluate(() => {
       const username = document.querySelector('meta[property="og:title"]')
         ? document.querySelector('meta[property="og:title"]').getAttribute('content').split('•')[0].trim()
@@ -1666,7 +1968,7 @@ async function scrapeInstagramData(username) {
 
       if (followersElement && followersElement.textContent) {
         const followersText = followersElement.textContent.trim();
-        const followersMatch = followersText.match(/(\d+([,\.]\d{1,3})*)/);
+        const followersMatch = followersText.match(/(\d+(\.\d+)?)([KMBkmb]?)\s*/);
         followersCount = followersMatch ? followersMatch[0] : null;
       }
 
@@ -1692,31 +1994,19 @@ async function scrapeInstagramData(username) {
       return { username, followersCount, followingCount, postsCount };
     });
 
-    console.log('User Data:', userData);
+    // console.timeEnd('Username Scrape Time');
 
-    if (userData.username) {
-      console.log(`Instagram Username: ${userData.username}`);
-    } else {
-      console.log('Instagram username not found.');
-    }
+    // console.time('Followers Scrape Time');
+    // console.log(`Followers Count: ${userData.followersCount}`);
+    // console.timeEnd('Followers Scrape Time');
 
-    if (userData.followersCount) {
-      console.log(`Followers Count: ${userData.followersCount}`);
-    } else {
-      console.log('Followers count not found.');
-    }
+    // console.time('Following Scrape Time');
+    // console.log(`Following Count: ${userData.followingCount}`);
+    // console.timeEnd('Following Scrape Time');
 
-    if (userData.followingCount) {
-      console.log(`Following Count: ${userData.followingCount}`);
-    } else {
-      console.log('Following count not found.');
-    }
-
-    if (userData.postsCount) {
-      console.log(`Posts Count: ${userData.postsCount}`);
-    } else {
-      console.log('Posts count not found.');
-    }
+    // console.time('Posts Scrape Time');
+    // console.log(`Posts Count: ${userData.postsCount}`);
+    // console.timeEnd('Posts Scrape Time');
 
     return userData;
 
@@ -1724,30 +2014,12 @@ async function scrapeInstagramData(username) {
     console.error('Error scraping Instagram data:', error);
     return null;
   } finally {
-    // Ensure timing ends and browser is closed even if there was an error
     if (browser) {
       await browser.close();
     }
-    console.timeEnd('Scrape Time After Login');
     console.timeEnd('Total Scraper Time');
   }
 }
-
-
-
-// app.get('/profile/:username', async (req, res) => {
-//   const { username } = req.params;
-//   const data = await scrapeInstagramData(username);
-
-//   if (data) {
-//     res.json({
-//       username: username,
-//       followers: data.followersCount
-//     });
-//   } else {
-//     res.status(500).json({ error: 'Unable to fetch profile data' });
-//   }
-// });
 
 
 // Default route for root URL
@@ -1785,3 +2057,6 @@ app.get('/get-cookies', async (req, res) => {
 app.listen(port, () => {
   console.log(`App running on http://localhost:${port}`);
 });
+
+
+
