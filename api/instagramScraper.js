@@ -1934,7 +1934,7 @@ async function scrapeInstagramData(username) {
     if (!(await page.context().cookies()).length) {
       console.time('Login Time');
       await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'domcontentloaded', timeout: 10000 });
-      await page.waitForSelector('input[name="username"]', { timeout: 5000 });
+      await page.waitForSelector('input[name="username"]', { timeout: 30000 });
       await humanDelay();
       await page.type('input[name="username"]', INSTAGRAM_USERNAME, { delay: 0 });
       await page.type('input[name="password"]', INSTAGRAM_PASSWORD, { delay: 0 });
@@ -1950,7 +1950,7 @@ async function scrapeInstagramData(username) {
     // Scraping data
     // console.time('Username Scrape Time');
     await gotoWithRetry(page, `https://www.instagram.com/${username}/`);
-    await page.waitForSelector('header section ul li span', { timeout: 5000 });
+    await page.waitForSelector('header section ul li span', { timeout: 30000 });
 
     const userData = await page.evaluate(() => {
       const username = document.querySelector('meta[property="og:title"]')
