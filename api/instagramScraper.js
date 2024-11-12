@@ -2581,7 +2581,7 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 
 const app = express();
-const port = 5000;
+const port = 8080;
 
 // Minimize human delay for better performance
 async function loadDelay() {
@@ -2687,6 +2687,10 @@ app.get('/profile/:username', async (req, res) => {
   } else {
     res.status(500).json({ error: 'Unable to fetch profile data' });
   }
+});
+
+app.get('/', (req, res) => {
+  res.send('API is running');
 });
 
 app.listen(port, () => {
