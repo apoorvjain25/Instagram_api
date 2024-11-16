@@ -3650,7 +3650,6 @@ async function run(url, username) {
         }
       }
     }
-
     console.log("Waiting for necessary elements...");
     await page.waitForSelector("header section ul li span", { timeout: 5000 });
     console.log("Elements found!");
@@ -3669,6 +3668,7 @@ async function run(url, username) {
 
     return data;
   } catch (error) {
+    
     console.error("An error occurred:", error.message);
     throw error;
   }
