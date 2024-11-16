@@ -32,7 +32,8 @@
     "playwright": "^1.48.2",
     "playwright-cluster": "^1.0.7",
     "proxy-chain": "^2.5.4",
-    "puppeteer": "^23.7.0",
+    "puppeteer": "^23.8.0",
+    "puppeteer-core": "^23.8.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2"
   }

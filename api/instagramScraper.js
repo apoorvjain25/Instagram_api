@@ -65,28 +65,28 @@
 //     // Start timer for time after login
 //     console.time('Scrape Time After Login');
 
-//     const url = `https://www.instagram.com/${username}/`;
-//     console.log(`Navigating to: ${url}`);
-//     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
+    // const url = `https://www.instagram.com/${username}/`;
+    // console.log(`Navigating to: ${url}`);
+    // await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
 
-//     await page.waitForSelector('header section ul li span', { timeout: 5000 });
+    // await page.waitForSelector('header section ul li span', { timeout: 5000 });
 
-//     const data = await page.evaluate(() => {
-//       const stats = document.querySelectorAll('header section ul li');
-//       const posts = stats[0]?.querySelector('span')?.innerText || null;
-//       const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
-//       const following = stats[2]?.querySelector('span')?.innerText || null;
-//       const extractedUsername = document.querySelector('header h2')?.innerText || null;
-//       return { extractedUsername, posts, followers, following };
-//     });
+    // const data = await page.evaluate(() => {
+    //   const stats = document.querySelectorAll('header section ul li');
+    //   const posts = stats[0]?.querySelector('span')?.innerText || null;
+    //   const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
+    //   const following = stats[2]?.querySelector('span')?.innerText || null;
+    //   const extractedUsername = document.querySelector('header h2')?.innerText || null;
+    //   return { extractedUsername, posts, followers, following };
+    // });
 
-//     await browser.close();
+    // await browser.close();
 
-//     // End timer for scraping time after login
-//     console.timeEnd('Scrape Time After Login');
+    // // End timer for scraping time after login
+    // console.timeEnd('Scrape Time After Login');
 
-//     // End timer for total scrape time
-//     console.timeEnd('Total Scraper Time');
+    // // End timer for total scrape time
+    // console.timeEnd('Total Scraper Time');
 
 //     return data;
 //   } catch (error) {
@@ -2577,122 +2577,1005 @@
 
 
 
-const express = require('express');
-const puppeteer = require('puppeteer');
+// const express = require('express');
+// const puppeteer = require('puppeteer');
+
+// const app = express();
+// const port = 8080;
+
+// // Minimize human delay for better performance
+// async function loadDelay() {
+//   return (await import('delay')).default;
+// }
+
+// async function humanDelay(min = 5, max = 20) {
+//   const delay = await loadDelay();
+//   const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
+//   await delay(randomDelay);
+// }
+
+// // List of 10 unique user agents
+// const userAgents = [
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36',
+//   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:81.0) Gecko/20100101 Firefox/81.0',
+//   'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'
+// ];
+
+// // Function to pick a random user agent
+// const getRandomUserAgent = () => userAgents[Math.floor(Math.random() * userAgents.length)];
+
+// async function scrapeInstagramData(username) {
+//   try {
+//     console.time('Total Scraper Time');
+
+//     const browser = await puppeteer.launch({
+//       headless: true,
+//       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+//       defaultViewport: { width: 1280, height: 800 }
+//     });
+
+//     const page = await browser.newPage();
+
+//     await page.setRequestInterception(true);
+//     page.on('request', (req) => {
+//       const resourceType = req.resourceType();
+//       if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+//         req.abort();
+//       } else {
+//         req.continue();
+//       }
+//     });
+
+//     // Set a random User-Agent from the list
+//     await page.setUserAgent(getRandomUserAgent());
+
+//     const url = `https://www.instagram.com/${username}/`;
+//     console.log(`Navigating to: ${url}`);
+//     await page.goto(url, { waitUntil: 'networkidle0', timeout: 20000 });
+
+//     // Handle the login pop-up or modal if it appears
+//     try {
+//       await page.waitForSelector('button[type="button"]:not([style="display: none;"])', { timeout: 5000 });
+//       console.log('Login popup detected, closing it...');
+//       await page.click('button[type="button"]:not([style="display: none;"])');
+//     } catch (err) {
+//       console.log('No login popup appeared');
+//     }
+
+//     // Wait for the profile page elements to load
+//     await page.waitForSelector('header section ul li span', { timeout: 10000 });
+
+//     const data = await page.evaluate(() => {
+//       const stats = document.querySelectorAll('header section ul li');
+//       const posts = stats[0]?.querySelector('span')?.innerText || null;
+//       const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
+//       const following = stats[2]?.querySelector('span')?.innerText || null;
+//       const extractedUsername = document.querySelector('header h2')?.innerText || null;
+//       return { extractedUsername, posts, followers, following };
+//     });
+
+//     await browser.close();
+
+//     console.timeEnd('Total Scraper Time');
+
+//     return data;
+//   } catch (error) {
+//     console.error('Error scraping Instagram data:', error);
+//     console.timeEnd('Total Scraper Time');
+//     return null;
+//   }
+// }
+
+// app.get('/profile/:username', async (req, res) => {
+//   const { username } = req.params;
+//   const data = await scrapeInstagramData(username);
+
+//   if (data) {
+//     res.json({
+//       username: data.extractedUsername || username,
+//       posts: data.posts,
+//       followers: data.followers,
+//       following: data.following
+//     });
+//   } else {
+//     res.status(500).json({ error: 'Unable to fetch profile data' });
+//   }
+// });
+
+// app.get('/', (req, res) => {
+//   res.send('API is running');
+// });
+
+// app.listen(port, () => {
+//   console.log(`App running on http://localhost:${port}`);
+// });
+
+
+
+// const express = require('express');
+// const puppeteer = require('puppeteer');
+// const loadDelay = require('delay');
+
+// const app = express();
+// const port = 8080;
+
+// const proxies = [
+//   '156.233.86.178:3128', // Brazil
+//   '45.202.78.80:3128', // Italy
+//   '156.253.171.164:3128', // United Kingdom
+//   '104.207.46.127:3128', // United States of America
+//   '156.228.79.82:3128', // United States of America
+//   '156.228.79.151:3128', // United States of America
+//   '156.228.94.21:3128', // United States of America
+//   '154.213.195.66:3128', // France
+//   '45.201.10.7:3128', // Thailand
+//   '156.228.189.249:3128' // United States of America
+// ];
+
+
+// // Function to get a random proxy from the list
+// const getRandomProxy = () => proxies[Math.floor(Math.random() * proxies.length)];
+
+// // List of 10 unique user agents
+// const userAgents = [
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36',
+//   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:81.0) Gecko/20100101 Firefox/81.0',
+//   'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'
+// ];
+
+// // Function to pick a random user agent
+// const getRandomUserAgent = () => userAgents[Math.floor(Math.random() * userAgents.length)];
+
+// async function scrapeInstagramData(username) {
+//   try {
+//     console.time('Total Scraper Time');
+
+//     // Randomly pick a proxy
+//     const proxy = getRandomProxy();
+//     console.log(`Using proxy: ${proxy}`);
+
+//     const browser = await puppeteer.launch({
+//       headless: true,
+//       args: [
+//         '--no-sandbox',
+//         '--disable-setuid-sandbox',
+//         '--disable-dev-shm-usage',
+//         `--proxy-server=${proxy}` // Set the proxy here
+//       ],
+//       defaultViewport: { width: 1280, height: 800 }
+//     });
+
+//     const page = await browser.newPage();
+
+//     await page.setRequestInterception(true);
+//     page.on('request', (req) => {
+//       const resourceType = req.resourceType();
+//       if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+//         req.abort();
+//       } else {
+//         req.continue();
+//       }
+//     });
+
+//     // Set a random User-Agent from the list
+//     await page.setUserAgent(getRandomUserAgent());
+
+//     const url = `https://www.instagram.com/${username}/`;
+//     console.log(`Navigating to: ${url}`);
+//     await page.goto(url, { waitUntil: 'networkidle0', timeout: 20000 });
+
+//     // Handle the login pop-up or modal if it appears
+//     try {
+//       await page.waitForSelector('button[type="button"]:not([style="display: none;"])', { timeout: 5000 });
+//       console.log('Login popup detected, closing it...');
+//       await page.click('button[type="button"]:not([style="display: none;"])');
+//     } catch (err) {
+//       console.log('No login popup appeared');
+//     }
+
+//     // Wait for the profile page elements to load
+//     await page.waitForSelector('header section ul li span', { timeout: 10000 });
+
+//     const data = await page.evaluate(() => {
+//       const stats = document.querySelectorAll('header section ul li');
+//       const posts = stats[0]?.querySelector('span')?.innerText || null;
+//       const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
+//       const following = stats[2]?.querySelector('span')?.innerText || null;
+//       const extractedUsername = document.querySelector('header h2')?.innerText || null;
+//       return { extractedUsername, posts, followers, following };
+//     });
+
+//     await browser.close();
+
+//     console.timeEnd('Total Scraper Time');
+
+//     return data;
+//   } catch (error) {
+//     console.error('Error scraping Instagram data:', error);
+//     console.timeEnd('Total Scraper Time');
+//     return null;
+//   }
+// }
+
+
+
+// app.get('/profile/:username', async (req, res) => {
+//   const { username } = req.params;
+//   const data = await scrapeInstagramData(username);
+
+//   if (data) {
+//     res.json({
+//       username: data.extractedUsername || username,
+//       posts: data.posts,
+//       followers: data.followers,
+//       following: data.following
+//     });
+//   } else {
+//     res.status(500).json({ error: 'Unable to fetch profile data' });
+//   }
+// });
+
+// app.get('/', (req, res) => {
+//   res.send('API is running');
+// });
+
+// app.listen(port, () => {
+//   console.log(`App running on http://localhost:${port}`);
+// });
+
+// without login code work with proxy rotation but instagram detect unusual hit without login on default page
+// const express = require('express');
+// const puppeteer = require('puppeteer');
+// const loadDelay = require('delay');
+
+// const app = express();
+// const port = 8080;
+
+// const proxies = [
+//   '156.233.86.178:3128', // Brazil
+//   '45.202.78.80:3128', // Italy
+//   '156.253.171.164:3128', // United Kingdom
+//   '104.207.46.127:3128', // United States of America
+//   '156.228.79.82:3128', // United States of America
+//   '156.228.79.151:3128', // United States of America
+//   '156.228.94.21:3128', // United States of America
+//   '154.213.195.66:3128', // France
+//   '45.201.10.7:3128', // Thailand
+//   '156.228.189.249:3128' // United States of America
+// ];
+
+// // Function to get a random proxy from the list
+// const getRandomProxy = () => proxies[Math.floor(Math.random() * proxies.length)];
+
+// // List of 10 unique user agents
+// const userAgents = [
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36',
+//   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:81.0) Gecko/20100101 Firefox/81.0',
+//   'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+//   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'
+// ];
+
+// // Function to pick a random user agent
+// const getRandomUserAgent = () => userAgents[Math.floor(Math.random() * userAgents.length)];
+
+// async function scrapeInstagramData(username) {
+//   try {
+//     console.time('Total Scraper Time');
+
+//     // Randomly pick a proxy
+//     const proxy = getRandomProxy();
+//     console.log(`Using proxy: ${proxy}`);
+
+//     const browser = await puppeteer.launch({
+//       headless: false, // Set to false to see the browser window
+//       args: [
+//         '--no-sandbox',
+//         '--disable-setuid-sandbox',
+//         '--disable-dev-shm-usage',
+//         `--proxy-server=${proxy}` // Set the proxy here
+//       ],
+//       defaultViewport: { width: 1280, height: 800 }
+//     });
+
+//     const page = await browser.newPage();
+
+//     await page.setRequestInterception(true);
+//     page.on('request', (req) => {
+//       const resourceType = req.resourceType();
+//       if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+//         req.abort();
+//       } else {
+//         req.continue();
+//       }
+//     });
+
+//     // Set a random User-Agent from the list
+//     await page.setUserAgent(getRandomUserAgent());
+
+//     const url = `https://www.instagram.com/${username}/`;
+//     console.log(`Navigating to: ${url}`);
+//     await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
+
+//     // Handle the login pop-up or modal if it appears
+//     try {
+//       await page.waitForSelector('button[type="button"]:not([style="display: none;"])', { timeout: 5000 });
+//       console.log('Login popup detected, closing it...');
+//       await page.click('button[type="button"]:not([style="display: none;"])');
+//     } catch (err) {
+//       console.log('No login popup appeared');
+//     }
+
+//     // Wait for the profile page elements to load, with increased timeout
+//     await page.waitForSelector('header section ul li span', { timeout: 30000 });
+
+//     const data = await page.evaluate(() => {
+//       const stats = document.querySelectorAll('header section ul li');
+//       const posts = stats[0]?.querySelector('span')?.innerText || null;
+//       const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
+//       const following = stats[2]?.querySelector('span')?.innerText || null;
+//       const extractedUsername = document.querySelector('header h2')?.innerText || null;
+//       return { extractedUsername, posts, followers, following };
+//     });
+
+//     await browser.close();
+
+//     console.timeEnd('Total Scraper Time');
+
+//     return data;
+//   } catch (error) {
+//     console.error('Error scraping Instagram data:', error);
+//     console.timeEnd('Total Scraper Time');
+//     return null;
+//   }
+// }
+
+// app.get('/profile/:username', async (req, res) => {
+//   const { username } = req.params;
+//   const data = await scrapeInstagramData(username);
+
+//   if (data) {
+//     res.json({
+//       username: data.extractedUsername || username,
+//       posts: data.posts,
+//       followers: data.followers,
+//       following: data.following
+//     });
+//   } else {
+//     res.status(500).json({ error: 'Unable to fetch profile data' });
+//   }
+// });
+
+// app.get('/', (req, res) => {
+//   res.send('API is running');
+// });
+
+// app.listen(port, () => {
+//   console.log(`App running on http://localhost:${port}`);
+// });
+
+// require('dotenv').config(); // Load environment variables
+// const express = require('express');
+// const puppeteer = require('puppeteer');
+
+// const app = express();
+// const port = 8080;
+
+// // Environment Variables for Proxy and Instagram Credentials
+// const proxyHost = process.env.PROXY_HOST || "proxy.toolip.io";
+// const proxyPort = process.env.PROXY_PORT || "31114";
+// const proxyUsername = process.env.PROXY_USERNAME;
+// const proxyPassword = process.env.PROXY_PASSWORD;
+// const instagramPassword = process.env.INSTAGRAM_PASSWORD; // Store Instagram password securely
+
+// async function loginToInstagram(username) {
+//   try {
+//     console.time('Total Scraper Time');
+
+//     // Puppeteer launch options
+//     const browser = await puppeteer.launch({
+//       headless: true,
+//       args: [
+//         `--proxy-server=http://${proxyHost}:${proxyPort}`,
+//         '--no-sandbox',
+//         '--disable-setuid-sandbox',
+//         '--disable-dev-shm-usage',
+//       ],
+//       ignoreHTTPSErrors: true,
+//     });
+
+//     const page = await browser.newPage();
+
+//     // Proxy authentication
+//     console.log('Authenticating proxy...');
+//     await page.authenticate({
+//       username: proxyUsername,
+//       password: proxyPassword,
+//     });
+
+//     // Set user agent and viewport
+//     const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
+//     await page.setUserAgent(userAgent);
+//     await page.setViewport({ width: 1366, height: 768 });
+
+//     console.log('Navigating to Instagram login page...');
+//     await page.goto('https://www.instagram.com/accounts/login/', {
+//       waitUntil: 'networkidle2',
+//       timeout: 30000,
+//     });
+
+//     // Wait for the login form
+//     await page.waitForSelector('input[name="username"]', { timeout: 10000 });
+
+//     console.log('Entering login credentials...');
+//     await page.type('input[name="username"]', username, { delay: 100 });
+//     await page.type('input[name="password"]', instagramPassword, { delay: 100 });
+
+//     console.log('Submitting login form...');
+//     await page.click('button[type="submit"]');
+//     await page.waitForNavigation({ waitUntil: 'networkidle2' });
+
+//     // Check for login error
+//     const loginError = await page.$('div[role="alert"]');
+//     if (loginError) {
+//       console.error('Login failed. Please check your credentials.');
+//       await browser.close();
+//       return null;
+//     }
+
+//     console.log('Login successful. Navigating to profile page...');
+//     await page.goto(`https://www.instagram.com/${username}/`, { waitUntil: 'networkidle2' });
+
+//     console.log('Extracting profile data...');
+//     const profileData = await page.evaluate(() => {
+//       const stats = document.querySelectorAll('header section ul li');
+//       return {
+//         posts: stats[0]?.innerText || 'N/A',
+//         followers: stats[1]?.innerText || 'N/A',
+//         following: stats[2]?.innerText || 'N/A',
+//       };
+//     });
+
+//     await browser.close();
+//     console.timeEnd('Total Scraper Time');
+//     return profileData;
+//   } catch (error) {
+//     console.error('Error during scraping:', error);
+//     return null;
+//   }
+// }
+
+// // API route to fetch profile data
+// app.get('/profile/:username', async (req, res) => {
+//   const username = req.params.username;
+
+//   console.log(`Scraping Instagram profile for user: ${username}`);
+//   const data = await loginToInstagram(username);
+
+//   if (data) {
+//     res.json(data);
+//   } else {
+//     res.status(500).json({ error: 'Failed to fetch profile data' });
+//   }
+// });
+
+// // Start the Express server
+// app.listen(port, () => {
+//   console.log(`Server running at http://localhost:${port}`);
+// });
+
+// require('dotenv').config();
+// const puppeteer = require('puppeteer-extra');
+// const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+// const fs = require('fs');
+
+// // Use Puppeteer stealth plugin to avoid detection
+// puppeteer.use(StealthPlugin());
+
+// async function loginToInstagram() {
+//   try {
+//     // Load proxy configuration from JSON file
+//     const proxies = JSON.parse(fs.readFileSync('proxyConfig.json', 'utf8'));
+
+//     // Use the first proxy in the list (you can add logic for rotation if needed)
+//     const proxy = proxies[0];
+
+//     const { login, password, host, port } = proxy;
+//     const { INSTAGRAM_USERNAME, INSTAGRAM_PASSWORD } = process.env;
+
+//     // Determine proxy type (HTTP or SOCKS)
+//     const proxyType = proxy.socks5 ? 'socks5' : 'http';
+
+//     const browser = await puppeteer.launch({
+//       headless: false, // Set to true for headless mode
+//       args: [`--proxy-server=${proxyType}://${host}:${port}`],
+//     });
+
+//     const page = await browser.newPage();
+
+//     // Authenticate with the proxy
+//     await page.authenticate({
+//       username: login,
+//       password,
+//     });
+
+//     // Set a user agent
+//     await page.setUserAgent(
+//       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.5790.102 Safari/537.36'
+//     );
+
+//     // Navigate to Instagram login page
+//     await page.goto('https://www.instagram.com/accounts/login/', {
+//       waitUntil: 'networkidle2',
+//       timeout: 60000,
+//     });
+
+//     // Wait for the username input field and fill in credentials
+//     await page.waitForSelector('input[name="username"]', { timeout: 30000 });
+//     await page.type('input[name="username"]', INSTAGRAM_USERNAME, { delay: 100 });
+//     await page.type('input[name="password"]', INSTAGRAM_PASSWORD, { delay: 100 });
+
+//     // Click login button
+//     await page.click('button[type="submit"]');
+
+//     // Wait for navigation after login
+//     await page.waitForNavigation({ waitUntil: 'networkidle2' });
+
+//     console.log('Login successful');
+
+//     // Optionally: Take a screenshot for debugging
+//     await page.screenshot({ path: 'login-success.png' });
+
+//     await browser.close();
+//   } catch (err) {
+//     console.error('Error during scraping:', err);
+//   }
+// }
+
+// loginToInstagram();
+
+// const puppeteer = require('puppeteer');
+// const fs = require('fs');
+// const path = require('path');
+
+// async function loginToInstagram() {
+//   try {
+//     // Build absolute path for proxyConfig.json
+//     const configPath = path.join(__dirname, 'proxyConfig.json');
+
+//     // Check if the file exists
+//     if (!fs.existsSync(configPath)) {
+//       throw new Error(`File not found: ${configPath}`);
+//     }
+
+//     // Load and parse proxy configuration
+//     const proxies = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+//     const proxy = proxies[0];  // Assuming you only have one proxy configuration
+
+//     // Log proxy details to verify
+//     console.log('Using proxy:', proxy);
+
+//     // Start Puppeteer with proxy configuration and bypass SSL errors
+//     const browser = await puppeteer.launch({
+//       headless: false,  // Set to true if you don't want to see the browser UI
+//       args: [
+//         `--proxy-server=${proxy.host}:${proxy.port}`,
+//       ],
+//       ignoreHTTPSErrors: true,  // Ignore SSL certificate errors
+//     });
+
+//     const page = await browser.newPage();
+
+//     // Set proxy authentication credentials
+//     await page.authenticate({
+//       username: proxy.login,
+//       password: proxy.password,
+//     });
+
+//     // Use page context to also ignore SSL errors
+//     await page.setRequestInterception(true);
+
+//     page.on('request', (request) => {
+//       if (request.resourceType() === 'document') {
+//         request.continue();
+//       } else {
+//         request.continue();
+//       }
+//     });
+
+//     console.log('Navigating to Instagram login page...');
+//     await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'networkidle2' });
+
+//     // Perform Instagram login
+//     await page.type('input[name="username"]', 'arunsharma99758'); // Your Instagram username
+//     await page.type('input[name="password"]', 'Arun@123'); // Your Instagram password
+//     await page.click('button[type="submit"]');
+
+//     console.log('Logging in...');
+//     await page.waitForNavigation({ waitUntil: 'networkidle2' });
+
+//     // After logging in, you can start scraping the Instagram profile
+//     console.log('Logged in successfully, now scraping profile...');
+
+//     // Navigate to the Instagram profile
+//     await page.goto('https://www.instagram.com/arunsharma99758/', { waitUntil: 'networkidle2' });
+
+//     // Scraping logic here...
+//     const profileData = await page.evaluate(() => {
+//       return {
+//         username: document.querySelector('h1') ? document.querySelector('h1').innerText : null,
+//         posts: document.querySelectorAll('.v1Nh3') ? document.querySelectorAll('.v1Nh3').length : 0
+//       };
+//     });
+
+//     console.log('Scraped Profile Data:', profileData);
+
+//     await browser.close();
+//   } catch (err) {
+//     console.error('Error during scraping:', err);
+//   }
+// }
+
+// loginToInstagram();
+
+
+//ssl working code perfectly with proxy rotation
+
+// const puppeteer = require('puppeteer');
+// const fs = require('fs');
+// const path = require('path');
+
+// async function scrapeInstagram() {
+//   try {
+//     // Build absolute path for proxyConfig.json and SSL certificate
+//     const configPath = path.join(__dirname, 'proxyConfig.json');
+//     const sslCertPath = path.join(__dirname, 'ssl_toolip_certificate.cer'); // Replace with actual path
+
+//     // Check if the file exists
+//     if (!fs.existsSync(configPath)) {
+//       throw new Error(`File not found: ${configPath}`);
+//     }
+
+//     // Load and parse proxy configuration
+//     const proxies = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+//     const proxy = proxies[0];  // Assuming you only have one proxy configuration
+
+//     // Log proxy details to verify
+//     console.log('Using proxy:', proxy);
+
+//     // Check if SSL certificate exists
+//     if (!fs.existsSync(sslCertPath)) {
+//       throw new Error(`SSL certificate not found: ${sslCertPath}`);
+//     }
+
+//     // Start Puppeteer with proxy configuration and SSL certificate
+//     const browser = await puppeteer.launch({
+//       headless: true,  // Set to true if you don't want to see the browser UI
+//       args: [
+//         `--proxy-server=${proxy.host}:${proxy.port}`,
+//         `--ignore-certificate-errors`,  // Ignore SSL certificate errors
+//         `--cert-load=${sslCertPath}`,  // Load the SSL certificate
+//       ],
+//       ignoreHTTPSErrors: true,  // Ignore SSL certificate errors
+//     });
+
+//     const page = await browser.newPage();
+
+//     // Set proxy authentication credentials
+//     await page.authenticate({
+//       username: proxy.login,
+//       password: proxy.password,
+//     });
+
+//     // Navigate to Instagram profile
+//     console.log('Navigating to Instagram profile page...');
+//     await page.goto('https://www.instagram.com/iamsrk/', { waitUntil: 'networkidle2' });
+
+//     // Scraping logic here...
+//     const profileData = await page.evaluate(() => {
+//       return {
+//         username: document.querySelector('h1') ? document.querySelector('h1').innerText : null,
+//         posts: document.querySelectorAll('.v1Nh3') ? document.querySelectorAll('.v1Nh3').length : 0
+//       };
+//     });
+
+//     console.log('Scraped Profile Data:', profileData);
+
+//     await browser.close();
+//   } catch (err) {
+//     console.error('Error during scraping:', err);
+//   }
+// }
+
+// scrapeInstagram();
+
+
+// const puppeteer = require("puppeteer-core");
+
+
+// const URL = "https://www.instagram.com/";
+// const BROWSER_WS = "wss://brd-customer-hl_c56b0932-zone-scraping_browser1:49qi53gye688@brd.superproxy.io:9222";
+
+// // Replace this with the Instagram username you want to scrape
+// const username = "tarunshrm222";
+
+// run(URL, username);
+
+// async function run(url, username) {
+//   console.log("Connecting to browser...");
+//   const browser = await puppeteer.connect({
+//     browserWSEndpoint: BROWSER_WS,
+//   });
+//   console.log("Connected! Navigate to site...");
+//   const page = await browser.newPage();
+//   const profileUrl = `${url}${username}/`;
+//   console.log(`Navigating to: ${profileUrl}`);
+//   await page.goto(profileUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+//   console.log("Waiting for necessary elements...");
+//   // Wait for the elements (profile stats) to be available
+//   await page.waitForSelector('header section ul li span', { timeout: 30000 });
+
+//   console.log("Parsing data...");
+//   const data = await page.evaluate(() => {
+//     const stats = document.querySelectorAll('header section ul li');
+    
+//     // Extract posts, followers, and following
+//     const posts = stats[0]?.querySelector('span')?.innerText || 'Not found';
+//     const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || 'Not found';
+//     const following = stats[2]?.querySelector('span')?.innerText || 'Not found';
+
+//     // Extract the username (if available)
+//     const extractedUsername = document.querySelector('header h2')?.innerText || 'Not found';
+    
+//     return { extractedUsername, posts, followers, following };
+//   });
+
+//   console.log("Data parsed:", JSON.stringify(data, null, 2));
+
+//   await browser.close();
+// }
+
+
+// const puppeteer = require("puppeteer-core");
+
+// const URL = "https://www.instagram.com/";
+// const BROWSER_WS = "wss://brd-customer-hl_c56b0932-zone-scraping_browser1:49qi53gye688@brd.superproxy.io:9222";
+
+// // Replace this with the Instagram username you want to scrape
+// const username = "tarunshrm222";
+
+// run(URL, username);
+
+// async function run(url, username) {
+//   try {
+//     console.log("Connecting to browser...");
+//     const browser = await puppeteer.connect({
+//       browserWSEndpoint: BROWSER_WS,
+//     });
+//     console.log("Connected! Navigate to site...");
+//     const page = await browser.newPage();
+//     const profileUrl = `${url}${username}/`;
+//     console.log(`Navigating to: ${profileUrl}`);
+
+//     let retries = 3;
+//     while (retries > 0) {
+//       try {
+//         // Attempt to navigate to the Instagram profile
+//         await page.goto(profileUrl, { waitUntil: 'networkidle0', timeout: 60000 });
+//         console.log("Navigation successful!");
+//         break;
+//       } catch (error) {
+//         retries -= 1;
+//         console.log(`Navigation failed. Retrying... Attempts left: ${retries}`);
+//         if (retries === 0) {
+//           throw new Error("Navigation failed after multiple attempts.");
+//         }
+//       }
+//     }
+
+//     console.log("Waiting for necessary elements...");
+//     // Wait for the elements (profile stats) to be available
+//     await page.waitForSelector('header section ul li span', { timeout: 30000 });
+
+//     console.log("Parsing data...");
+//     const data = await page.evaluate(() => {
+//       const stats = document.querySelectorAll('header section ul li');
+      
+//       // Extract posts, followers, and following
+//       const posts = stats[0]?.querySelector('span')?.innerText || 'Not found';
+//       const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || 'Not found';
+//       const following = stats[2]?.querySelector('span')?.innerText || 'Not found';
+
+//       // Extract the username (if available)
+//       const extractedUsername = document.querySelector('header h2')?.innerText || 'Not found';
+      
+//       return { extractedUsername, posts, followers, following };
+//     });
+
+//     console.log("Data parsed:", JSON.stringify(data, null, 2));
+
+//     await browser.close();
+//   } catch (error) {
+//     console.error("An error occurred:", error.message);
+//   }
+// }
+
+
+
+
+//perfect work with proxy latest code 16 Nov
+// const puppeteer = require("puppeteer-core");
+
+// const URL = "https://www.instagram.com/";
+// const BROWSER_WS = "wss://brd-customer-hl_c56b0932-zone-scraping_browser1:49qi53gye688@brd.superproxy.io:9222";
+
+// // Replace this with the Instagram username you want to scrape
+// const username = "imkamaalkhan";
+
+// run(URL, username);
+
+// async function run(url, username) {
+//   try {
+//     console.log("Connecting to browser...");
+//     const browser = await puppeteer.connect({
+//       browserWSEndpoint: BROWSER_WS,
+//     });
+//     console.log("Connected! Navigate to site...");
+//     const page = await browser.newPage();
+//     const profileUrl = `${url}${username}/`;
+//     console.log(`Navigating to: ${profileUrl}`);
+
+//     let retries = 3;
+//     while (retries > 0) {
+//       try {
+//         // Attempt to navigate to the Instagram profile
+//         await page.goto(profileUrl, { waitUntil: 'networkidle0', timeout: 60000 });
+//         console.log("Navigation successful!");
+//         break;
+//       } catch (error) {
+//         retries -= 1;
+//         console.log(`Navigation failed. Retrying... Attempts left: ${retries}`);
+//         if (retries === 0) {
+//           throw new Error("Navigation failed after multiple attempts.");
+//         }
+//       }
+//     }
+
+//     console.log("Waiting for necessary elements...");
+//     try {
+//       // Wait for the elements (profile stats) to be available
+//       await page.waitForSelector('header section ul li span', { timeout: 5000 });
+//       console.log("Elements found!");
+
+//       // Parse the data
+//       const data = await page.evaluate(() => {
+//         const stats = document.querySelectorAll('header section ul li');
+//         const posts = stats[0]?.querySelector('span')?.innerText || null;
+//         const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
+//         const following = stats[2]?.querySelector('span')?.innerText || null;
+//         const extractedUsername = document.querySelector('header h2')?.innerText || null;
+//         return { extractedUsername, posts, followers, following };
+//       });
+
+//       console.log("Data parsed:", JSON.stringify(data, null, 2));
+//     } catch (error) {
+//       console.error("Error while waiting for selector:", error.message);
+//     }
+
+//     await browser.close();
+//   } catch (error) {
+//     console.error("An error occurred:", error.message);
+//   }
+// }
+
+
+const puppeteer = require("puppeteer-core");
+const express = require("express");
+
+const URL = "https://www.instagram.com/";
+const BROWSER_WS = "wss://brd-customer-hl_c56b0932-zone-scraping_browser1:49qi53gye688@brd.superproxy.io:9222";
 
 const app = express();
-const port = 8080;
 
-// Minimize human delay for better performance
-async function loadDelay() {
-  return (await import('delay')).default;
-}
 
-async function humanDelay(min = 5, max = 20) {
-  const delay = await loadDelay();
-  const randomDelay = Math.floor(Math.random() * (max - min + 1)) + min;
-  await delay(randomDelay);
-}
+// Health check endpoint to verify API is running
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "API is running........",
+  });
+});
 
-// List of 10 unique user agents
-const userAgents = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:81.0) Gecko/20100101 Firefox/81.0',
-  'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'
-];
 
-// Function to pick a random user agent
-const getRandomUserAgent = () => userAgents[Math.floor(Math.random() * userAgents.length)];
+// API endpoint to scrape Instagram profile with username from URL
+app.get("/profile/:username", async (req, res) => {
+  const { username } = req.params; // Extracting username from the URL
+  if (!username) {
+    return res.status(400).json({ error: "Username is required!" });
+  }
 
-async function scrapeInstagramData(username) {
+  console.log(`Scraping profile for username: ${username}`);
   try {
-    console.time('Total Scraper Time');
+    const data = await run(URL, username);
+    res.status(200).json({ success: true, data });
+  } catch (error) {
+    console.error("Error occurred during scraping:", error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-      defaultViewport: { width: 1280, height: 800 }
+// Start the Express server
+const PORT = 8080;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+// Puppeteer scraping function
+async function run(url, username) {
+  try {
+    console.log("Connecting to browser...");
+    const browser = await puppeteer.connect({
+      browserWSEndpoint: BROWSER_WS,
     });
-
+    console.log("Connected! Navigating to site...");
     const page = await browser.newPage();
+    const profileUrl = `${url}${username}/`;
+    console.log(`Navigating to: ${profileUrl}`);
 
-    await page.setRequestInterception(true);
-    page.on('request', (req) => {
-      const resourceType = req.resourceType();
-      if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
-        req.abort();
-      } else {
-        req.continue();
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        await page.goto(profileUrl, { waitUntil: "networkidle0", timeout: 60000 });
+        console.log("Navigation successful!");
+        break;
+      } catch (error) {
+        retries -= 1;
+        console.log(`Navigation failed. Retrying... Attempts left: ${retries}`);
+        if (retries === 0) {
+          throw new Error("Navigation failed after multiple attempts.");
+        }
       }
-    });
-
-    // Set a random User-Agent from the list
-    await page.setUserAgent(getRandomUserAgent());
-
-    const url = `https://www.instagram.com/${username}/`;
-    console.log(`Navigating to: ${url}`);
-    await page.goto(url, { waitUntil: 'networkidle0', timeout: 20000 });
-
-    // Handle the login pop-up or modal if it appears
-    try {
-      await page.waitForSelector('button[type="button"]:not([style="display: none;"])', { timeout: 5000 });
-      console.log('Login popup detected, closing it...');
-      await page.click('button[type="button"]:not([style="display: none;"])');
-    } catch (err) {
-      console.log('No login popup appeared');
     }
 
-    // Wait for the profile page elements to load
-    await page.waitForSelector('header section ul li span', { timeout: 10000 });
+    console.log("Waiting for necessary elements...");
+    await page.waitForSelector("header section ul li span", { timeout: 5000 });
+    console.log("Elements found!");
 
     const data = await page.evaluate(() => {
-      const stats = document.querySelectorAll('header section ul li');
-      const posts = stats[0]?.querySelector('span')?.innerText || null;
-      const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
-      const following = stats[2]?.querySelector('span')?.innerText || null;
-      const extractedUsername = document.querySelector('header h2')?.innerText || null;
+      const stats = document.querySelectorAll("header section ul li");
+      const posts = stats[0]?.querySelector("span")?.innerText || null;
+      const followers = stats[1]?.querySelector("span")?.getAttribute("title") || stats[1]?.innerText || null;
+      const following = stats[2]?.querySelector("span")?.innerText || null;
+      const extractedUsername = document.querySelector("header h2")?.innerText || null;
       return { extractedUsername, posts, followers, following };
     });
 
+    console.log("Data parsed:", JSON.stringify(data, null, 2));
     await browser.close();
-
-    console.timeEnd('Total Scraper Time');
 
     return data;
   } catch (error) {
-    console.error('Error scraping Instagram data:', error);
-    console.timeEnd('Total Scraper Time');
-    return null;
+    console.error("An error occurred:", error.message);
+    throw error;
   }
 }
-
-app.get('/profile/:username', async (req, res) => {
-  const { username } = req.params;
-  const data = await scrapeInstagramData(username);
-
-  if (data) {
-    res.json({
-      username: data.extractedUsername || username,
-      posts: data.posts,
-      followers: data.followers,
-      following: data.following
-    });
-  } else {
-    res.status(500).json({ error: 'Unable to fetch profile data' });
-  }
-});
-
-app.get('/', (req, res) => {
-  res.send('API is running');
-});
-
-app.listen(port, () => {
-  console.log(`App running on http://localhost:${port}`);
-});
