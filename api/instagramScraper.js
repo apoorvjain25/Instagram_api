@@ -65,28 +65,28 @@
 //     // Start timer for time after login
 //     console.time('Scrape Time After Login');
 
-    // const url = `https://www.instagram.com/${username}/`;
-    // console.log(`Navigating to: ${url}`);
-    // await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
+//     const url = `https://www.instagram.com/${username}/`;
+//     console.log(`Navigating to: ${url}`);
+//     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 });
 
-    // await page.waitForSelector('header section ul li span', { timeout: 5000 });
+//     await page.waitForSelector('header section ul li span', { timeout: 5000 });
 
-    // const data = await page.evaluate(() => {
-    //   const stats = document.querySelectorAll('header section ul li');
-    //   const posts = stats[0]?.querySelector('span')?.innerText || null;
-    //   const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
-    //   const following = stats[2]?.querySelector('span')?.innerText || null;
-    //   const extractedUsername = document.querySelector('header h2')?.innerText || null;
-    //   return { extractedUsername, posts, followers, following };
-    // });
+//     const data = await page.evaluate(() => {
+//       const stats = document.querySelectorAll('header section ul li');
+//       const posts = stats[0]?.querySelector('span')?.innerText || null;
+//       const followers = stats[1]?.querySelector('span')?.getAttribute('title') || stats[1]?.innerText || null;
+//       const following = stats[2]?.querySelector('span')?.innerText || null;
+//       const extractedUsername = document.querySelector('header h2')?.innerText || null;
+//       return { extractedUsername, posts, followers, following };
+//     });
 
-    // await browser.close();
+//     await browser.close();
 
-    // // End timer for scraping time after login
-    // console.timeEnd('Scrape Time After Login');
+//     // End timer for scraping time after login
+//     console.timeEnd('Scrape Time After Login');
 
-    // // End timer for total scrape time
-    // console.timeEnd('Total Scraper Time');
+//     // End timer for total scrape time
+//     console.timeEnd('Total Scraper Time');
 
 //     return data;
 //   } catch (error) {
@@ -3581,12 +3581,234 @@
 // }
 
 
+
+// Proxcy code latest work perfect 
+// const puppeteer = require("puppeteer-core");
+// const express = require("express");
+// const cors = require("cors"); // Import CORS
+
+// const URL = "https://www.instagram.com/";
+// const BROWSER_WS = "wss://brd-customer-hl_c56b0932-zone-scraping_browser1:49qi53gye688@brd.superproxy.io:9222";
+
+// const app = express();
+
+// // Use CORS middleware
+// app.use(cors()); // Allow all origins
+
+// // Health check endpoint to verify API is running
+// app.get("/", (req, res) => {
+//   res.status(200).json({
+//     success: true,
+//     message: "API is running........",
+//   });
+// });
+
+// // API endpoint to scrape Instagram profile with username from URL
+// app.get("/profile/:username", async (req, res) => {
+//   const { username } = req.params; // Extracting username from the URL
+//   if (!username) {
+//     return res.status(400).json({ error: "Username is required!" });
+//   }
+
+//   console.log(`Scraping profile for username: ${username}`);
+//   try {
+//     const data = await run(URL, username);
+//     res.status(200).json({ success: true, data });
+//   } catch (error) {
+//     console.error("Error occurred during scraping:", error.message);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// });
+
+// // Start the Express server
+// const PORT = 8080;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on http://localhost:${PORT}`);
+// });
+
+// // Puppeteer scraping function
+// async function run(url, username) {
+//   try {
+//     console.log("Connecting to browser...");
+//     const browser = await puppeteer.connect({
+//       browserWSEndpoint: BROWSER_WS,
+//     });
+//     console.log("Connected! Navigating to site...");
+//     const page = await browser.newPage();
+//     const profileUrl = `${url}${username}/`;
+//     console.log(`Navigating to: ${profileUrl}`);
+
+//     let retries = 3;
+//     while (retries > 0) {
+//       try {
+//         await page.goto(profileUrl, { waitUntil: "networkidle0", timeout: 60000 });
+//         console.log("Navigation successful!");
+//         break;
+//       } catch (error) {
+//         retries -= 1;
+//         console.log(`Navigation failed. Retrying... Attempts left: ${retries}`);
+//         if (retries === 0) {
+//           throw new Error("Navigation failed after multiple attempts.");
+//         }
+//       }
+//     }
+//     console.log("Waiting for necessary elements...");
+//     await page.waitForSelector("header section ul li span", { timeout: 5000 });
+//     console.log("Elements found!");
+
+//     const data = await page.evaluate(() => {
+//       const stats = document.querySelectorAll("header section ul li");
+//       const posts = stats[0]?.querySelector("span")?.innerText || null;
+//       const followers = stats[1]?.querySelector("span")?.getAttribute("title") || stats[1]?.innerText || null;
+//       const following = stats[2]?.querySelector("span")?.innerText || null;
+//       const extractedUsername = document.querySelector("header h2")?.innerText || null;
+
+//         // Extracting bio text
+//   const bio = document.querySelector("header section div > span")?.innerText || null;
+
+//       return { extractedUsername, posts, followers, following, bio };
+//     });
+
+//     console.log("Data parsed:", JSON.stringify(data, null, 2));
+//     await browser.close();
+
+//     return data;
+//   } catch (error) {
+    
+//     console.error("An error occurred:", error.message);
+//     throw error;
+//   }
+// }
+
+//proxy code work & console all process time 
+
+// const puppeteer = require("puppeteer-core");
+// const express = require("express");
+// const cors = require("cors"); // Import CORS
+
+// const URL = "https://www.instagram.com/";
+// const BROWSER_WS = "wss://brd-customer-hl_f7df9886-zone-scraping_browser1:unruwff8pb50@brd.superproxy.io:9222";
+
+// const app = express();
+
+// // Use CORS middleware
+// app.use(cors()); // Allow all origins
+
+// // Health check endpoint to verify API is running
+// app.get("/", (req, res) => {
+//   res.status(200).json({
+//     success: true,
+//     message: "API is running........",
+//   });
+// });
+
+// // API endpoint to scrape Instagram profile with username from URL
+// app.get("/profile/:username", async (req, res) => {
+//   const { username } = req.params; // Extracting username from the URL
+//   if (!username) {
+//     return res.status(400).json({ error: "Username is required!" });
+//   }
+
+//   console.log(`Scraping profile for username: ${username}`);
+//   try {
+//     const data = await run(URL, username);
+//     res.status(200).json({ success: true, data });
+//   } catch (error) {
+//     console.error("Error occurred during scraping:", error.message);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// });
+
+// // Start the Express server
+// const PORT = 8080;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on http://localhost:${PORT}`);
+// });
+
+// // Puppeteer scraping function
+// async function run(url, username) {
+//   console.time("Total Time");
+//   try {
+//     console.time("Connecting to Browser");
+//     const browser = await puppeteer.connect({
+//       browserWSEndpoint: BROWSER_WS,
+//     });
+//     console.timeEnd("Connecting to Browser");
+
+//     console.time("Opening New Page");
+//     const page = await browser.newPage();
+//     console.timeEnd("Opening New Page");
+
+//     const profileUrl = `${url}${username}/`;
+//     console.log(`Navigating to: ${profileUrl}`);
+
+//     console.time("Page Load Time");
+//     let retries = 3;
+//     while (retries > 0) {
+//       try {
+//         await page.goto(profileUrl, { waitUntil: "networkidle0", timeout: 60000 });
+//         console.timeEnd("Page Load Time");
+//         console.log("Navigation successful!");
+//         break;
+//       } catch (error) {
+//         retries -= 1;
+//         console.log(`Navigation failed. Retrying... Attempts left: ${retries}`);
+//         if (retries === 0) {
+//           throw new Error("Navigation failed after multiple attempts.");
+//         }
+//       }
+//     }
+
+//     console.time("Element Wait Time");
+//     await page.waitForSelector("header section ul li span", { timeout: 20000 });
+//     console.timeEnd("Element Wait Time");
+//     console.log("Elements found!");
+
+//     console.time("Data Extraction Time");
+//     const data = await page.evaluate(() => {
+//       const stats = document.querySelectorAll("header section ul li");
+//       const posts = stats[0]?.querySelector("span")?.innerText || null;
+//       const followers = stats[1]?.querySelector("span")?.getAttribute("title") || stats[1]?.innerText || null;
+//       const following = stats[2]?.querySelector("span")?.innerText || null;
+//       const extractedUsername = document.querySelector("header h2")?.innerText || null;
+
+   
+//     //Extracting bio text 
+//   const bio1 = document.querySelector("header section div > span")?.innerText || null;
+//   const bio2 = document.querySelector("header section div div > span")?.innerText || null;
+
+      
+//       return { extractedUsername, posts, followers, following, bio1, bio2};
+
+
+//     });
+//     console.timeEnd("Data Extraction Time");
+
+//     console.log("Data parsed:", JSON.stringify(data, null, 2));
+
+//     console.time("Browser Close Time");
+//     await browser.close();
+//     console.timeEnd("Browser Close Time");
+
+//     console.timeEnd("Total Time");
+//     return data;
+//   } catch (error) {
+//     console.timeEnd("Total Time");
+//     console.error("An error occurred:", error.message);
+//     throw error;
+//   }
+// }
+
+
+
+
+//test code 
 const puppeteer = require("puppeteer-core");
 const express = require("express");
 const cors = require("cors"); // Import CORS
 
 const URL = "https://www.instagram.com/";
-const BROWSER_WS = "wss://brd-customer-hl_c56b0932-zone-scraping_browser1:49qi53gye688@brd.superproxy.io:9222";
+const BROWSER_WS = "wss://brd-customer-hl_f7df9886-zone-scraping_browser1:unruwff8pb50@brd.superproxy.io:9222";
 
 const app = express();
 
@@ -3626,20 +3848,31 @@ app.listen(PORT, () => {
 
 // Puppeteer scraping function
 async function run(url, username) {
+  console.time("Total Time");
   try {
-    console.log("Connecting to browser...");
+    console.time("Connecting to Browser");
     const browser = await puppeteer.connect({
       browserWSEndpoint: BROWSER_WS,
     });
-    console.log("Connected! Navigating to site...");
+    
+    console.timeEnd("Connecting to Browser");
+
+    console.time("Opening New Page");
     const page = await browser.newPage();
+    console.timeEnd("Opening New Page");
+
     const profileUrl = `${url}${username}/`;
     console.log(`Navigating to: ${profileUrl}`);
 
+    console.time("Page Load Time");
     let retries = 3;
     while (retries > 0) {
       try {
-        await page.goto(profileUrl, { waitUntil: "networkidle0", timeout: 60000 });
+        // await page.goto(profileUrl, { waitUntil: "networkidle0", timeout: 60000 });
+        await page.goto(profileUrl, { waitUntil: "domcontentloaded", timeout: 10000 });
+
+
+        console.timeEnd("Page Load Time");
         console.log("Navigation successful!");
         break;
       } catch (error) {
@@ -3650,26 +3883,46 @@ async function run(url, username) {
         }
       }
     }
-    console.log("Waiting for necessary elements...");
-    await page.waitForSelector("header section ul li span", { timeout: 5000 });
+
+    console.time("Element Wait Time");
+    await page.waitForSelector("header section ul li span", { timeout: 20000 });
+    console.timeEnd("Element Wait Time");
     console.log("Elements found!");
 
+    console.time("Data Extraction Time");
     const data = await page.evaluate(() => {
       const stats = document.querySelectorAll("header section ul li");
       const posts = stats[0]?.querySelector("span")?.innerText || null;
       const followers = stats[1]?.querySelector("span")?.getAttribute("title") || stats[1]?.innerText || null;
       const following = stats[2]?.querySelector("span")?.innerText || null;
       const extractedUsername = document.querySelector("header h2")?.innerText || null;
-      return { extractedUsername, posts, followers, following };
+
+   
+  //   //Extracting bio text 
+  // const bio1 = document.querySelector("header section div > span")?.innerText || null;
+  // const bio2 = document.querySelector("header section div div > span")?.innerText || null;
+
+      
+      return { extractedUsername, posts, followers, following};
+
+
     });
+    console.timeEnd("Data Extraction Time");
 
     console.log("Data parsed:", JSON.stringify(data, null, 2));
-    await browser.close();
 
+    console.time("Browser Close Time");
+    await browser.close();
+    console.timeEnd("Browser Close Time");
+
+    console.timeEnd("Total Time");
     return data;
   } catch (error) {
-    
+    console.timeEnd("Total Time");
     console.error("An error occurred:", error.message);
     throw error;
   }
 }
+
+
+
