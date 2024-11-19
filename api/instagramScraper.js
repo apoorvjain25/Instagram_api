@@ -3898,16 +3898,71 @@ async function run(url, username) {
       const extractedUsername = document.querySelector("header h2")?.innerText || null;
 
    
-  //   //Extracting bio text 
-  // const bio1 = document.querySelector("header section div > span")?.innerText || null;
-  // const bio2 = document.querySelector("header section div div > span")?.innerText || null;
+    //Extracting bio text 
+  const name = document.querySelector("header section div > span")?.innerText || null;
+  //const bio = document.querySelector("header section div div")?.innerText || null;
 
-      
-      return { extractedUsername, posts, followers, following};
+  //   // Extract the bio from the `description` meta tag
+  // const metaDescription = document.querySelector("meta[name='description']")?.getAttribute("content") || null;
+  // let bio = null;
+
+  // if (metaDescription) {
+  //   // Extract the part after "on Instagram:"
+  //   const match = metaDescription.match(/on Instagram: (.+)$/);
+  //   bio = match ? match[1].trim() : null;
+  // }
+
+  // Extract profile image URL from `og:image` meta tag
+  const profileImageUrl = document.querySelector("meta[property='og:image']")?.getAttribute("content") || null;
+  //const fullBio = document.querySelector("meta[property='og:description']")?.getAttribute("content") || null;
+  
+  // Select the meta tag with the name "description"
+const fullBio = document.querySelector("meta[name='description']")?.getAttribute("content") || null;
+
+  const userUrl = document.querySelector("meta[property='og:url']")?.getAttribute("content") || null;
+
+  
+      return { extractedUsername, posts, followers, following, name, fullBio, profileImageUrl, userUrl};
 
 
     });
     console.timeEnd("Data Extraction Time");
+
+// // Wait for post data
+// await page.waitForSelector("a[href*='/reel/']", { timeout: 20000 });
+
+// console.time("Post Data Extraction Time");
+// const postData = await page.evaluate(() => {
+//   // Locate the first post using its anchor element
+//   const firstPostAnchor = document.querySelector("a[href*='/reel/']");
+//   let likes = null;
+//   let caption = null;
+
+//   if (firstPostAnchor) {
+//     // Navigate to the parent div containing likes and caption
+//     const postContainer = firstPostAnchor.closest("div");
+
+//     // Extract likes count
+//     const likesElement = postContainer.querySelector("span[aria-label*='like']"); // Update the selector if needed
+//     likes = likesElement ? likesElement.innerText.replace(/[^\d]/g, '') : "Likes not found";
+
+//     // Extract caption content
+//     const captionElement = postContainer.querySelector("img[alt]");
+//     caption = captionElement ? captionElement.alt : "Caption not found";
+//   }
+
+//   return {
+//     likesCount: likes,
+//     postCaption: caption,
+//   };
+// });
+
+// console.timeEnd("Post Data Extraction Time");
+
+// // Combine the results
+// const result = { profileData: data, postData };
+// console.log("Extracted Data:", result);
+
 
     console.log("Data parsed:", JSON.stringify(data, null, 2));
 
